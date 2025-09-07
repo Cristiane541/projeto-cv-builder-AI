@@ -1,21 +1,21 @@
 // Estrutura da requisição para melhoria de texto via IA
 export interface AIEnhanceRequest {
-  field: 'summary' | 'experience'; // Campo a ser melhorado
-  text: string;                    // Texto original enviado para IA
-  context?: string;                // Contexto adicional (ex: cargo, empresa)
+  field: 'summary' | 'experience'; 
+  text: string;                    
+  context?: string;                
 }
 
 // Estrutura da resposta da IA
 export interface AIEnhanceResponse {
-  improvedText: string;            // Texto aprimorado retornado pela IA
-  suggestions?: string[];          // Sugestões adicionais (opcional)
-  error?: string;                  // Mensagem de erro (se houver)
+  improvedText: string;           
+  suggestions?: string[];          
+  error?: string;                  
 }
 
 // Estrutura para erros de integração com a API
 export interface APIError {
-  code: string;                    // Código do erro
-  message: string;                 // Descrição amigável do erro
+  code: string;                   
+  message: string;                 
 }
 
 // Estados de carregamento para operações assíncronas
