@@ -17,3 +17,17 @@ export interface APIError {
   code: string;                    // Código do erro
   message: string;                 // Descrição amigável do erro
 }
+
+// Estados de carregamento para operações assíncronas
+export interface LoadingState {
+  isLoading: boolean;
+  error?: string;
+}
+
+// Configuração do serviço de IA
+export interface AIServiceConfig {
+  apiKey: string;
+  model?: string;
+  maxTokens?: number;
+  temperature?: number;
+}

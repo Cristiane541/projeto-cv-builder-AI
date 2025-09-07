@@ -33,3 +33,26 @@ export interface CVData {
   skills: Skill[];
   experiences: Experience[];
 }
+
+// Callbacks para atualização dos dados
+export interface CVDataActions {
+  updatePersonalInfo: (field: keyof PersonalInfo, value: string) => void;
+  addSkill: (skill: Omit<Skill, 'id'>) => void;
+  removeSkill: (id: string) => void;
+  updateSkill: (id: string, updates: Partial<Omit<Skill, 'id'>>) => void;
+  addExperience: (experience: Omit<Experience, 'id'>) => void;
+  removeExperience: (id: string) => void;
+  updateExperience: (id: string, updates: Partial<Omit<Experience, 'id'>>) => void;
+}
+
+// Props para componentes de formulário
+export interface FormComponentProps {
+  data: CVData;
+  actions: CVDataActions;
+}
+
+// Estados de validação
+export interface ValidationState {
+  isValid: boolean;
+  errors: Record<string, string>;
+}

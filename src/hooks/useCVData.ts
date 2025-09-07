@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { CVData, PersonalInfo, Skill, Experience } from '../types/cv.types';
+import type { CVData, PersonalInfo, Skill, Experience, CVDataActions } from '../types/cv.types';
 
 // Hook para gerenciar o estado central do currículo
 export function useCVData() {
@@ -16,18 +16,29 @@ export function useCVData() {
   });
 
   // Atualiza dados pessoais
-  function updatePersonalInfo(info: Partial<PersonalInfo>) {
-    setCVData((prev) => ({
-      ...prev,
-      personal: { ...prev.personal, ...info },
-    }));
+  function updatePersonalInfo(field: keyof PersonalInfo, value: string) {
+    setCVData((prev) => {
+      // Evita re-renderização desnecessária se o valor não mudou
+      if (prev.personal[field] === value) {
+        return prev;
+      }
+      
+      return {
+        ...prev,
+        personal: { ...prev.personal, [field]: value },
+      };
+    });
   }
 
   // Adiciona uma habilidade
-  function addSkill(skill: Skill) {
+  function addSkill(skill: Omit<Skill, 'id'>) {
+    const newSkill: Skill = {
+      ...skill,
+      id: crypto.randomUUID(),
+    };
     setCVData((prev) => ({
       ...prev,
-      skills: [...prev.skills, skill],
+      skills: [...prev.skills, newSkill],
     }));
   }
 
@@ -39,11 +50,25 @@ export function useCVData() {
     }));
   }
 
-  // Adiciona uma experiência
-  function addExperience(exp: Experience) {
+  // Atualiza uma habilidade
+  function updateSkill(id: string, updates: Partial<Omit<Skill, 'id'>>) {
     setCVData((prev) => ({
       ...prev,
-      experiences: [...prev.experiences, exp],
+      skills: prev.skills.map((skill) =>
+        skill.id === id ? { ...skill, ...updates } : skill
+      ),
+    }));
+  }
+
+  // Adiciona uma experiência
+  function addExperience(experience: Omit<Experience, 'id'>) {
+    const newExperience: Experience = {
+      ...experience,
+      id: crypto.randomUUID(),
+    };
+    setCVData((prev) => ({
+      ...prev,
+      experiences: [...prev.experiences, newExperience],
     }));
   }
 
@@ -55,13 +80,30 @@ export function useCVData() {
     }));
   }
 
-  return {
-    cvData,
+  // Atualiza uma experiência
+  function updateExperience(id: string, updates: Partial<Omit<Experience, 'id'>>) {
+    setCVData((prev) => ({
+      ...prev,
+      experiences: prev.experiences.map((exp) =>
+        exp.id === id ? { ...exp, ...updates } : exp
+      ),
+    }));
+  }
+
+  // Retorna os dados e ações conforme a interface CVDataActions
+  const actions: CVDataActions = {
     updatePersonalInfo,
     addSkill,
     removeSkill,
+    updateSkill,
     addExperience,
     removeExperience,
+    updateExperience,
+  };
+
+  return {
+    cvData,
+    actions,
     setCVData,
   };
 }
