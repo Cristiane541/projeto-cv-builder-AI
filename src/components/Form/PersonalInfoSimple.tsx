@@ -74,25 +74,53 @@ const PersonalInfoSimple: React.FC<PersonalInfoProps> = ({ data, actions }) => {
           
           {/* Resumo */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Resumo Profissional *
-            </label>
+            <div className="flex justify-between items-center mb-1">
+              <label className="block text-sm font-medium text-gray-700">
+                Resumo Profissional *
+              </label>
+              <button
+                type="button"
+                onClick={() => actions.updatePersonalInfo('summary', '')}
+                className="text-xs text-red-600 hover:text-red-800 underline"
+              >
+                Limpar
+              </button>
+            </div>
             <textarea
               value={data.summary}
-              onChange={(e) => actions.updatePersonalInfo('summary', e.target.value)}
+              onChange={(e) => {
+                // Limita a 500 caracteres
+                const newValue = e.target.value;
+                if (newValue.length <= 500) {
+                  actions.updatePersonalInfo('summary', newValue);
+                }
+              }}
               placeholder="Descreva brevemente sua experiência profissional..."
               rows={4}
+              maxLength={500}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
             />
-            <p className="text-sm text-gray-500 mt-1">
+            <p className={`text-sm mt-1 ${
+              data.summary.length > 450 
+                ? 'text-red-600 font-medium' 
+                : data.summary.length > 350 
+                  ? 'text-yellow-600' 
+                  : 'text-gray-500'
+            }`}>
               {data.summary.length}/500 caracteres
+              {data.summary.length > 450 && (
+                <span className="ml-2 text-xs">⚠️ Próximo do limite</span>
+              )}
             </p>
           </div>
         </div>
         
         {/* Debug info */}
         <div className="mt-6 p-3 bg-gray-50 rounded text-xs">
-          <strong>Debug:</strong> Nome: "{data.name}" | Email: "{data.email}"
+          <strong>Debug:</strong><br/>
+          Nome: "{data.name || 'vazio'}"<br/>
+          Email: "{data.email || 'vazio'}"<br/>
+          Resumo: {data.summary ? `"${data.summary.substring(0, 50)}..." (${data.summary.length} chars)` : 'vazio'}
         </div>
       </div>
     </div>

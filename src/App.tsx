@@ -1,6 +1,6 @@
 import FormSection from './components/Layout/FormSection';
 import PreviewSection from './components/Layout/PreviewSection';
-import PersonalInfoSimple from './components/Form/PersonalInfoSimple';
+import PersonalInfoUltraSimple from './components/Form/PersonalInfoUltraSimple';
 import { useCVData } from './hooks/useCVData';
 
 function App() {
@@ -10,7 +10,7 @@ function App() {
     <div className="min-h-screen bg-gray-50">
       <div className="flex h-screen">
         <FormSection>
-          <PersonalInfoSimple data={cvData.personal} actions={actions} />
+          <PersonalInfoUltraSimple data={cvData.personal} actions={actions} />
         </FormSection>
         <PreviewSection>
           <div className="p-6">
