@@ -2,19 +2,21 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Reset básico para aplicação */
+/* Reset básico */
 * {
   box-sizing: border-box;
 }
 
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
   font-family: system-ui, -apple-system, sans-serif;
   background-color: #ffffff;
-  color: #1f2937;
+  color: #1f2937; /* gray-800 */
 }
 
+/* Nada de max-width/padding/center no #root (isso estava vindo do template do Vite) */
 #root {
   min-height: 100vh;
 }

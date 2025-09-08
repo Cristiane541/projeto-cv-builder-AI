@@ -1,30 +1,43 @@
-import { useState } from "react";
+// src/hooks/useAIEnhancement.ts
+import { useState, useCallback } from "react";
 import type { AIEnhanceRequest, AIEnhanceResponse } from "../types/api.types";
 import { enhanceText } from "../services/aiService";
 
+/** Fallback local simples se a API falhar */
+function localFallback(req: AIEnhanceRequest): AIEnhanceResponse {
+  const txt = (req.text || "").trim().replace(/\s+/g, " ");
+  const cap = txt ? txt[0].toUpperCase() + txt.slice(1) : "";
+
+  const base: AIEnhanceResponse = {
+    improvedText: cap,
+    suggestions: [
+      "Inclua impacto com números (%, R$, tempo, volume).",
+      "Use verbos de ação no início das frases.",
+      "Evite primeira pessoa; vá direto ao ponto.",
+    ],
+  };
+
+  if (req.field === "experience") {
+    base.suggestions?.unshift(
+      "Especifique tecnologia, escala e resultado alcançado."
+    );
+  }
+  return base;
+}
+
 export function useAIEnhancement() {
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | undefined>(undefined);
-
-  async function run(req: AIEnhanceRequest): Promise<AIEnhanceResponse> {
+  const run = useCallback(async (req: AIEnhanceRequest) => {
     setIsLoading(true);
-    setError(undefined);
     try {
-      const res = await enhanceText(req);
-      if (res.error) {
-        setError(res.error);
-        console.error("[AI] erro:", res.error);
-      }
-      return res;
-    } catch (e: any) {
-      const msg = e?.message || "Falha ao melhorar texto.";
-      setError(msg);
-      console.error("[AI] exceção:", msg);
-      return { improvedText: req.text, error: msg };
+      return await enhanceText(req);
+    } catch (e) {
+      console.error("IA (Gemini) falhou, usando fallback local:", e);
+      return localFallback(req);
     } finally {
       setIsLoading(false);
     }
-  }
+  }, []);
 
-  return { run, isLoading, error };
+  return { run, isLoading };
 }

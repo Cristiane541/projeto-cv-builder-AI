@@ -1,4 +1,3 @@
-// Formulário de experiências
 import React from "react";
 import type {
   Experience as ExperienceType,
@@ -19,124 +18,214 @@ const Experience: React.FC<ExperienceProps> = ({ data, actions }) => {
     current: false,
   });
 
+  const handleChange = (field: keyof typeof newExp, value: string | boolean) =>
+    setNewExp((prev) => ({ ...prev, [field]: value }));
+
   const addExperience = () => {
-    if (newExp.company.trim() && newExp.role.trim()) {
-      actions.addExperience({
-        company: newExp.company.trim(),
-        role: newExp.role.trim(),
-        period: newExp.period,
-        description: newExp.description,
-        current: newExp.current,
-      });
-      setNewExp({
-        company: "",
-        role: "",
-        period: "",
-        description: "",
-        current: false,
-      });
-    }
+    if (!newExp.company.trim() || !newExp.role.trim()) return;
+    actions.addExperience({
+      company: newExp.company.trim(),
+      role: newExp.role.trim(),
+      period: newExp.period,
+      description: newExp.description,
+      current: newExp.current,
+    });
+    setNewExp({
+      company: "",
+      role: "",
+      period: "",
+      description: "",
+      current: false,
+    });
   };
 
-  const removeExperience = (id: string) => {
-    actions.removeExperience(id);
+  const card: React.CSSProperties = {
+    padding: "24px",
+    backgroundColor: "white",
+    borderRadius: "8px",
+    boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
   };
 
-  const handleInputChange = (
-    field: keyof typeof newExp,
-    value: string | boolean
-  ) => {
-    setNewExp((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
+  const label: React.CSSProperties = {
+    display: "block",
+    fontSize: "14px",
+    fontWeight: 500,
+    marginBottom: "4px",
+    color: "#374151",
+  };
+
+  const inputBase: React.CSSProperties = {
+    width: "100%",
+    padding: "8px 12px",
+    border: "1px solid #d1d5db",
+    borderRadius: "6px",
+    fontSize: "14px",
+  };
+
+  const rowGap: React.CSSProperties = {
+    display: "flex",
+    flexDirection: "column",
+    gap: "16px",
   };
 
   return (
-    <div className="space-y-6 p-6 bg-white rounded-lg shadow-sm border border-gray-200">
-      <h3 className="text-lg font-semibold text-gray-800 mb-4">
+    <div style={card}>
+      <h2
+        style={{
+          fontSize: "20px",
+          fontWeight: "bold",
+          marginBottom: "16px",
+          color: "#1f2937",
+        }}
+      >
         Experiência Profissional
-      </h3>
+      </h2>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-gray-50 rounded-md">
-        <input
-          type="text"
-          value={newExp.company}
-          onChange={(e) => handleInputChange("company", e.target.value)}
-          placeholder="Nome da empresa"
-          className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-        <input
-          type="text"
-          value={newExp.role}
-          onChange={(e) => handleInputChange("role", e.target.value)}
-          placeholder="Cargo/Posição"
-          className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-        <input
-          type="text"
-          value={newExp.period}
-          onChange={(e) => handleInputChange("period", e.target.value)}
-          placeholder="Período (Ex: Jan 2020 - Dez 2022)"
-          className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-        <div className="flex items-center">
+      <div style={rowGap}>
+        <div>
+          <label style={label}>Nome da empresa</label>
           <input
-            type="checkbox"
-            id="current-job"
-            checked={newExp.current}
-            onChange={(e) => handleInputChange("current", e.target.checked)}
-            className="mr-2"
+            type="text"
+            value={newExp.company}
+            onChange={(e) => handleChange("company", e.target.value)}
+            placeholder="Ex.: Acme S.A."
+            style={inputBase}
           />
-          <label htmlFor="current-job" className="text-sm text-gray-700">
+        </div>
+
+        <div>
+          <label style={label}>Cargo/Posição</label>
+          <input
+            type="text"
+            value={newExp.role}
+            onChange={(e) => handleChange("role", e.target.value)}
+            placeholder="Ex.: Desenvolvedor Front-end"
+            style={inputBase}
+          />
+        </div>
+
+        <div>
+          <label style={label}>Período</label>
+          <input
+            type="text"
+            value={newExp.period}
+            onChange={(e) => handleChange("period", e.target.value)}
+            placeholder="Ex.: Jan 2020 - Dez 2022"
+            style={inputBase}
+          />
+        </div>
+
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <input
+            id="current-job"
+            type="checkbox"
+            checked={newExp.current}
+            onChange={(e) => handleChange("current", e.target.checked)}
+          />
+          <label
+            htmlFor="current-job"
+            style={{ fontSize: 14, color: "#374151" }}
+          >
             Emprego atual
           </label>
         </div>
-        <textarea
-          value={newExp.description}
-          onChange={(e) => handleInputChange("description", e.target.value)}
-          placeholder="Descrição das atividades e responsabilidades"
-          rows={3}
-          className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 md:col-span-2"
-        />
-        <button
-          onClick={addExperience}
-          className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 md:col-span-2"
-        >
-          Adicionar Experiência
-        </button>
+
+        <div>
+          <label style={label}>Descrição</label>
+          <textarea
+            rows={3}
+            value={newExp.description}
+            onChange={(e) => handleChange("description", e.target.value)}
+            placeholder="Descrição das atividades e responsabilidades"
+            style={{ ...inputBase, resize: "none", fontFamily: "inherit" }}
+          />
+        </div>
+
+        <div>
+          <button
+            onClick={addExperience}
+            style={{
+              padding: "8px 16px",
+              backgroundColor: "#2563eb",
+              color: "white",
+              borderRadius: "6px",
+              border: "none",
+              cursor: "pointer",
+            }}
+          >
+            Adicionar Experiência
+          </button>
+        </div>
       </div>
 
-      <div className="space-y-4">
+      <div style={{ marginTop: 16 }}>
         {data.map((exp) => (
           <div
             key={exp.id}
-            className="p-4 bg-gray-50 border border-gray-200 rounded-md"
+            style={{
+              padding: 16,
+              background: "#f9fafb",
+              border: "1px solid #e5e7eb",
+              borderRadius: 6,
+              marginTop: 12,
+            }}
           >
-            <div className="flex justify-between items-start mb-2">
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "flex-start",
+              }}
+            >
               <div>
-                <h4 className="font-semibold text-gray-800">{exp.role}</h4>
-                <p className="text-gray-600">{exp.company}</p>
-                <p className="text-sm text-gray-500">
+                <h4 style={{ fontWeight: 600, color: "#1f2937" }}>
+                  {exp.role || "Cargo"}
+                </h4>
+                <p style={{ color: "#4b5563" }}>{exp.company}</p>
+                <p style={{ color: "#6b7280", fontSize: 12 }}>
                   {exp.period} {exp.current && "(Atual)"}
                 </p>
               </div>
               <button
-                onClick={() => removeExperience(exp.id)}
-                className="text-red-500 hover:text-red-700 focus:outline-none ml-4"
+                onClick={() => actions.removeExperience(exp.id)}
                 title="Remover experiência"
+                style={{
+                  background: "none",
+                  border: "none",
+                  color: "#dc2626",
+                  cursor: "pointer",
+                  marginLeft: 16,
+                  fontSize: 16,
+                }}
               >
                 ✕
               </button>
             </div>
+
             {exp.description && (
-              <p className="text-gray-700 mt-2 text-sm">{exp.description}</p>
+              <p
+                style={{
+                  color: "#374151",
+                  fontSize: 14,
+                  marginTop: 8,
+                  whiteSpace: "pre-wrap",
+                }}
+              >
+                {exp.description}
+              </p>
             )}
           </div>
         ))}
 
         {data.length === 0 && (
-          <p className="text-gray-500 text-sm text-center py-4">
+          <p
+            style={{
+              color: "#6b7280",
+              fontSize: 14,
+              textAlign: "center",
+              padding: "12px 0",
+            }}
+          >
             Nenhuma experiência adicionada ainda.
           </p>
         )}

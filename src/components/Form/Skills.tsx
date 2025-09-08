@@ -1,4 +1,3 @@
-// Formulário de habilidades
 import React from "react";
 import type { Skill, CVDataActions, SkillLevel } from "../../types/cv.types";
 
@@ -12,64 +11,136 @@ const Skills: React.FC<SkillsProps> = ({ data, actions }) => {
   const [newLevel, setNewLevel] = React.useState<SkillLevel>("Básico");
 
   const addSkill = () => {
-    if (newSkill.trim()) {
-      actions.addSkill({
-        name: newSkill.trim(),
-        level: newLevel,
-      });
-      setNewSkill("");
-    }
+    if (!newSkill.trim()) return;
+    actions.addSkill({ name: newSkill.trim(), level: newLevel });
+    setNewSkill("");
   };
 
-  const removeSkill = (id: string) => {
-    actions.removeSkill(id);
+  const card: React.CSSProperties = {
+    padding: "24px",
+    backgroundColor: "white",
+    borderRadius: "8px",
+    boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
+  };
+
+  const label: React.CSSProperties = {
+    display: "block",
+    fontSize: "14px",
+    fontWeight: 500,
+    marginBottom: "4px",
+    color: "#374151",
+  };
+
+  const inputBase: React.CSSProperties = {
+    width: "100%",
+    padding: "8px 12px",
+    border: "1px solid #d1d5db",
+    borderRadius: "6px",
+    fontSize: "14px",
+  };
+
+  const rowGap: React.CSSProperties = {
+    display: "flex",
+    flexDirection: "column",
+    gap: "16px",
   };
 
   return (
-    <div className="space-y-4 p-6 bg-white rounded-lg shadow-sm border border-gray-200">
-      <h3 className="text-lg font-semibold text-gray-800 mb-4">Habilidades</h3>
+    <div style={card}>
+      <h2
+        style={{
+          fontSize: "20px",
+          fontWeight: "bold",
+          marginBottom: "16px",
+          color: "#1f2937",
+        }}
+      >
+        Habilidades
+      </h2>
 
-      <div className="flex flex-col sm:flex-row gap-2 mb-4">
-        <input
-          type="text"
-          value={newSkill}
-          onChange={(e) => setNewSkill(e.target.value)}
-          placeholder="Ex: React, TypeScript, Python"
-          className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-        <select
-          value={newLevel}
-          onChange={(e) => setNewLevel(e.target.value as SkillLevel)}
-          className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-        >
-          <option value="Básico">Básico</option>
-          <option value="Intermediário">Intermediário</option>
-          <option value="Avançado">Avançado</option>
-        </select>
-        <button
-          onClick={addSkill}
-          className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        >
-          Adicionar
-        </button>
+      <div style={rowGap}>
+        <div>
+          <label style={label}>Habilidade</label>
+          <input
+            type="text"
+            value={newSkill}
+            onChange={(e) => setNewSkill(e.target.value)}
+            placeholder="Ex.: React, TypeScript, Python"
+            style={inputBase}
+          />
+        </div>
+
+        <div>
+          <label style={label}>Nível</label>
+          <select
+            value={newLevel}
+            onChange={(e) => setNewLevel(e.target.value as SkillLevel)}
+            style={inputBase}
+          >
+            <option value="Básico">Básico</option>
+            <option value="Intermediário">Intermediário</option>
+            <option value="Avançado">Avançado</option>
+          </select>
+        </div>
+
+        <div>
+          <button
+            onClick={addSkill}
+            style={{
+              padding: "8px 16px",
+              backgroundColor: "#2563eb",
+              color: "white",
+              borderRadius: "6px",
+              border: "none",
+              cursor: "pointer",
+            }}
+          >
+            Adicionar
+          </button>
+        </div>
       </div>
 
-      <div className="space-y-2">
+      <div style={{ marginTop: 16 }}>
         {data.map((skill) => (
           <div
             key={skill.id}
-            className="flex items-center justify-between p-3 bg-gray-50 border border-gray-200 rounded-md"
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              padding: 12,
+              background: "#f9fafb",
+              border: "1px solid #e5e7eb",
+              borderRadius: 6,
+              marginTop: 8,
+            }}
           >
-            <div className="flex items-center gap-3">
-              <span className="font-medium text-gray-800">{skill.name}</span>
-              <span className="text-xs px-2 py-1 bg-blue-100 text-blue-800 rounded-full">
+            <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+              <span style={{ fontWeight: 600, color: "#1f2937" }}>
+                {skill.name}
+              </span>
+              <span
+                style={{
+                  fontSize: 12,
+                  padding: "2px 8px",
+                  borderRadius: 999,
+                  background: "#dbeafe",
+                  color: "#1e40af",
+                }}
+              >
                 {skill.level}
               </span>
             </div>
             <button
-              onClick={() => removeSkill(skill.id)}
-              className="text-red-500 hover:text-red-700 focus:outline-none ml-2"
+              onClick={() => actions.removeSkill(skill.id)}
               title="Remover habilidade"
+              style={{
+                background: "none",
+                border: "none",
+                color: "#dc2626",
+                cursor: "pointer",
+                fontSize: 16,
+              }}
             >
               ✕
             </button>
@@ -77,7 +148,14 @@ const Skills: React.FC<SkillsProps> = ({ data, actions }) => {
         ))}
 
         {data.length === 0 && (
-          <p className="text-gray-500 text-sm text-center py-4">
+          <p
+            style={{
+              color: "#6b7280",
+              fontSize: 14,
+              textAlign: "center",
+              padding: "12px 0",
+            }}
+          >
             Nenhuma habilidade adicionada ainda.
           </p>
         )}

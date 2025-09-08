@@ -6,6 +6,7 @@ import { AIEnhanceButton } from "./components/Form/AIEnhanceButton";
 import FormSection from "./components/Layout/FormSection";
 import Skills from "./components/Form/Skills";
 import Experience from "./components/Form/Experience";
+import SettingsKeyButton from "./components/UI/SettingsKeyButton";
 
 function App() {
   const { cvData, actions } = useCVData();
@@ -13,80 +14,50 @@ function App() {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="flex h-screen">
-        {/* Lado esquerdo: Formulário */}
         <FormSection>
-          {/* Seção de Informações Pessoais */}
           <PersonalInfoUltraSimple data={cvData.personal} actions={actions} />
-
-          {/* Seção de Habilidades - NOVA */}
           <Skills data={cvData.skills} actions={actions} />
-
-          {/* Seção de Experiência - NOVA */}
           <Experience data={cvData.experiences} actions={actions} />
         </FormSection>
 
-        {/* Lado direito: Preview + botão de IA */}
+        {/* Pode manter seu PreviewSection como já estava */}
         <PreviewSection>
-          <div className="p-6">
-            <h2 className="text-xl font-semibold text-gray-800 mb-4">
-              Preview do Currículo
-            </h2>
+          <div className="bg-white  rounded-md shadow-sm w-full max-w-[816px] mx-auto">
+            <div className="p-6 md:p-8">
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">
+                Preview do Currículo
+              </h2>
 
-            <div className="bg-white p-6 rounded-lg shadow-sm border">
-              <h3 className="text-lg font-bold text-gray-900">
-                {cvData.personal.name || "Seu Nome"}
-              </h3>
+              <div className="space-y-1">
+                <h3 className="text-lg font-bold text-gray-900">
+                  {cvData.personal.name || "Seu Nome"}
+                </h3>
+                <p className="text-gray-600">
+                  {cvData.personal.email || "seu.email@exemplo.com"}
+                </p>
+                <p className="text-gray-600">
+                  {cvData.personal.phone || "(11) 99999-9999"}
+                </p>
+                {cvData.personal.linkedin && (
+                  <p className="text-blue-600">{cvData.personal.linkedin}</p>
+                )}
+              </div>
 
-              <p className="text-gray-600">
-                {cvData.personal.email || "seu.email@exemplo.com"}
-              </p>
-
-              <p className="text-gray-600">
-                {cvData.personal.phone || "(11) 99999-9999"}
-              </p>
-
-              {cvData.personal.linkedin && (
-                <p className="text-blue-600">{cvData.personal.linkedin}</p>
-              )}
-
-              {/* Resumo + IA */}
-              <div className="mt-4 space-y-2">
+              <div className="mt-6 space-y-2">
                 <h4 className="font-semibold text-gray-800">
                   Resumo Profissional
                 </h4>
-                <p className="text-gray-700">
+                <p className="text-gray-700 whitespace-pre-wrap">
                   {cvData.personal.summary ||
                     "Resumo profissional aparecerá aqui."}
                 </p>
-
                 <AIEnhanceButton
                   field="summary"
                   text={cvData.personal.summary || ""}
                   onEnhanced={(t) => actions.updatePersonalInfo("summary", t)}
-                  size="sm"
                 />
               </div>
-              <p className="text-gray-600">
-                {cvData.personal.email || "seu.email@exemplo.com"}
-              </p>
-              <p className="text-gray-600">
-                {cvData.personal.phone || "(11) 99999-9999"}
-              </p>
-              {cvData.personal.linkedin && (
-                <p className="text-blue-600">{cvData.personal.linkedin}</p>
-              )}
-              {cvData.personal.summary && (
-                <div className="mt-4">
-                  <h4 className="font-semibold text-gray-800">
-                    Resumo Profissional
-                  </h4>
-                  <p className="text-gray-700 mt-1">
-                    {cvData.personal.summary}
-                  </p>
-                </div>
-              )}
 
-              {/* Preview das Habilidades - NOVO */}
               {cvData.skills.length > 0 && (
                 <div className="mt-6">
                   <h4 className="font-semibold text-gray-800 mb-2">
@@ -105,7 +76,6 @@ function App() {
                 </div>
               )}
 
-              {/* Preview da Experiência - NOVO */}
               {cvData.experiences.length > 0 && (
                 <div className="mt-6">
                   <h4 className="font-semibold text-gray-800 mb-3">
@@ -115,20 +85,21 @@ function App() {
                     {cvData.experiences.map((exp) => (
                       <div
                         key={exp.id}
-                        className="border-l-4 border-blue-500 pl-4"
+                        className="border-l-4 border-blue-500 pl-4 space-y-1.5"
                       >
-                        <h5 className="font-medium text-gray-900">
-                          {exp.role}
-                        </h5>
+                        <div className="flex items-center justify-between gap-3">
+                          <h5 className="font-medium text-gray-900">
+                            {exp.role || "Cargo"}
+                          </h5>
+                          <span className="text-xs text-gray-500">
+                            {exp.period} {exp.current ? "· Atual" : ""}
+                          </span>
+                        </div>
                         <p className="text-gray-600 text-sm">{exp.company}</p>
-                        <p className="text-gray-500 text-xs">
-                          {exp.period} {exp.current && "(Atual)"}
+                        <p className="text-gray-700 text-sm whitespace-pre-wrap">
+                          {exp.description ||
+                            "Descrição das atividades e responsabilidades."}
                         </p>
-                        {exp.description && (
-                          <p className="text-gray-700 text-sm mt-1">
-                            {exp.description}
-                          </p>
-                        )}
                       </div>
                     ))}
                   </div>
@@ -138,6 +109,9 @@ function App() {
           </div>
         </PreviewSection>
       </div>
+
+      {/* Botão flutuante para gerenciar a chave */}
+      <SettingsKeyButton />
     </div>
   );
 }
