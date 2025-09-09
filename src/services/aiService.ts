@@ -146,10 +146,42 @@ function localFallback(req: AIEnhanceRequest): AIEnhanceResponse {
 export async function enhanceText(
   req: AIEnhanceRequest
 ): Promise<AIEnhanceResponse> {
-  const apiKey = getActiveGeminiKey?.() || "";
-
-  // Sem chave → fallback local
-  if (!apiKey) return localFallback(req);
+  console.log('🔧 Iniciando enhanceText...');
+  
+  // Ordem de prioridade para obter a chave:
+  // 1. localStorage (configuração manual)
+  // 2. import.meta.env (arquivo .env)  
+  // 3. Chave hardcoded como fallback
+  
+  let apiKey = "";
+  
+  // Método 1: localStorage
+  try {
+    const storedKey = localStorage.getItem("cvbuilder:gemini_api_key");
+    if (storedKey) {
+      apiKey = storedKey;
+      console.log('🔑 Usando chave do localStorage: ✅');
+    }
+  } catch (e) {}
+  
+  // Método 2: .env via import.meta.env  
+  if (!apiKey) {
+    try {
+      const envKey = import.meta.env.VITE_GEMINI_API_KEY;
+      if (envKey) {
+        apiKey = envKey;
+        console.log('🔑 Usando chave do .env: ✅');
+      }
+    } catch (e) {}
+  }
+  
+  // Método 3: Fallback hardcoded
+  if (!apiKey) {
+    apiKey = "AIzaSyCQvuBVCNT9zv_A7cb2QhT2LyX7u7eASms";
+    console.log('🔑 Usando chave hardcoded (fallback): ✅');
+  }
+  
+  console.log('🔑 Chave final configurada:', apiKey ? '✅ PRONTA' : '❌ FALHA');
 
   const prompt = buildGeminiPrompt(req);
 

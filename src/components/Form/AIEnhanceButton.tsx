@@ -26,24 +26,17 @@ export const AIEnhanceButton: FC<Props> = ({
 }) => {
   const { run, isLoading } = useAIEnhancement();
   const [isHovered, setIsHovered] = useState(false);
-  
-  // Debug: mostrar estado no console
-  if (isLoading) {
-    console.log('🔄 ESTADO: isLoading = true, mostrando spinner');
-  }
 
   const handle = async () => {
-    console.log('🔄 Iniciando melhoria... isLoading será true');
     try {
+      console.log('🚀 Clicou no botão Melhorar com IA');
       const { improvedText } = await run({ field, text, context });
       if (improvedText) {
-        console.log('✅ Texto melhorado com sucesso');
         onEnhanced(improvedText);
       }
     } catch (error) {
       console.error('Erro ao melhorar texto:', error);
     }
-    console.log('🏁 Processo finalizado... isLoading será false');
   };
 
   return (
