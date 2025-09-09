@@ -3,6 +3,7 @@ import type {
   Experience as ExperienceType,
   CVDataActions,
 } from "../../types/cv.types";
+import { AIEnhanceButton } from "./AIEnhanceButton";
 
 interface ExperienceProps {
   data: ExperienceType[];
@@ -139,6 +140,21 @@ const Experience: React.FC<ExperienceProps> = ({ data, actions }) => {
             placeholder="Descrição das atividades e responsabilidades"
             style={{ ...inputBase, resize: "none", fontFamily: "inherit" }}
           />
+          
+          {/* Botão Melhorar com IA para nova experiência */}
+          {newExp.description && (
+            <div style={{ marginTop: '8px', display: 'flex', justifyContent: 'flex-end' }}>
+              <AIEnhanceButton
+                field="experience"
+                text={newExp.description}
+                context={`${newExp.company} | ${newExp.role} | ${newExp.period}`}
+                onEnhanced={(enhancedText) => {
+                  handleChange("description", enhancedText);
+                }}
+                size="sm"
+              />
+            </div>
+          )}
         </div>
 
         <div>
@@ -203,16 +219,31 @@ const Experience: React.FC<ExperienceProps> = ({ data, actions }) => {
             </div>
 
             {exp.description && (
-              <p
-                style={{
-                  color: "#374151",
-                  fontSize: 14,
-                  marginTop: 8,
-                  whiteSpace: "pre-wrap",
-                }}
-              >
-                {exp.description}
-              </p>
+              <div>
+                <p
+                  style={{
+                    color: "#374151",
+                    fontSize: 14,
+                    marginTop: 8,
+                    whiteSpace: "pre-wrap",
+                  }}
+                >
+                  {exp.description}
+                </p>
+                
+                {/* Botão Melhorar com IA para experiência existente */}
+                <div style={{ marginTop: '8px', display: 'flex', justifyContent: 'flex-end' }}>
+                  <AIEnhanceButton
+                    field="experience"
+                    text={exp.description}
+                    context={`${exp.company} | ${exp.role} | ${exp.period}`}
+                    onEnhanced={(enhancedText) => {
+                      actions.updateExperience(exp.id, { description: enhancedText });
+                    }}
+                    size="sm"
+                  />
+                </div>
+              </div>
             )}
           </div>
         ))}

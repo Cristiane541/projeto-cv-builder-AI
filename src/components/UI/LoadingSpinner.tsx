@@ -5,8 +5,10 @@ export const LoadingSpinner: FC<{ size?: number }> = ({ size = 16 }) => (
     width={size}
     height={size}
     viewBox="0 0 24 24"
-    className="animate-spin"
     aria-hidden="true"
+    style={{
+      animation: "spin 1s linear infinite",
+    }}
   >
     <circle
       cx="12"
@@ -23,5 +25,11 @@ export const LoadingSpinner: FC<{ size?: number }> = ({ size = 16 }) => (
       strokeWidth="3"
       fill="none"
     />
+    <style>{`
+      @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+      }
+    `}</style>
   </svg>
 );

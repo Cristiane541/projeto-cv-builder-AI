@@ -1,6 +1,7 @@
 // Versão ultra-simplificada para resolver o problema crítico
 import React, { useState, useEffect } from 'react';
 import type { PersonalInfo as PersonalInfoType, CVDataActions } from '../../types/cv.types';
+import { AIEnhanceButton } from './AIEnhanceButton';
 import { validateEmail, validateLinkedIn, validatePhone, formatPhone } from '../../utils/validation';
 
 interface PersonalInfoProps {
@@ -307,6 +308,19 @@ const PersonalInfoUltraSimple: React.FC<PersonalInfoProps> = ({ data, actions })
               <span style={{ marginLeft: '8px' }}>⚠️ Próximo do limite</span>
             )}
           </p>
+          
+          {/* Botão Melhorar com IA para o Resumo */}
+          <div style={{ marginTop: '8px', display: 'flex', justifyContent: 'flex-end' }}>
+            <AIEnhanceButton
+              field="summary"
+              text={data.summary || ""}
+              onEnhanced={(enhancedText) => {
+                actions.updatePersonalInfo('summary', enhancedText);
+                setSummaryLength(enhancedText.length);
+              }}
+              size="sm"
+            />
+          </div>
         </div>
       </div>
     </div>

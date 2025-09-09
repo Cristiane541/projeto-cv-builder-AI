@@ -6,14 +6,13 @@ interface PreviewSectionProps {
 
 const PreviewSection: React.FC<PreviewSectionProps> = ({ children }) => (
   /**
-   * ml-8 / md:ml-10 cria um ESPAÇO real entre a divisória (border-r do form)
-   * e a coluna do preview, resolvendo o “colado no canto”.
+   * Exatamente 50% da largura, sem espaços vazios
    */
-  <section className="flex-1 min-w-0 h-screen overflow-y-auto bg-gray-50 ml-8 md:ml-10">
-    {/* Respiro vertical */}
-    <div className="py-10">
-      {/* Centraliza o “papel” do currículo e dá padding interno */}
-      <div className="w-full max-w-[860px] mx-auto px-6 md:px-8">
+  <section className="w-1/2 h-screen overflow-y-auto bg-gray-50">
+    {/* Container que ocupa toda a largura */}
+    <div className="h-full p-4">
+      {/* Paper do currículo ocupando toda a largura disponível */}
+      <div className="w-full h-full">
         {children}
       </div>
     </div>

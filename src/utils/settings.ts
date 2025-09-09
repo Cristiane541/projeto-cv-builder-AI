@@ -22,7 +22,7 @@ export function getActiveGeminiKey(): string {
   const override = getStoredGeminiKey();
   if (override) return override;
 
-  // bypass de tipos: evita erro “import.meta.env” não existe
+  // bypass de tipos: evita erro "import.meta.env" não existe
   try {
     const envKey = (import.meta as any)?.env?.VITE_GEMINI_API_KEY;
     return typeof envKey === "string" ? envKey : "";

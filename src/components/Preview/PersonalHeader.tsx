@@ -11,38 +11,46 @@ export const PersonalHeader: FC<Props> = ({ personal, onImproveSummary }) => {
   const { name, email, phone, linkedin, summary } = personal;
 
   return (
-    <header className="space-y-3">
-      <h1 className="text-3xl font-semibold">{name || "Seu Nome"}</h1>
+    <div>
+      {/* Header com fundo verde */}
+      <div style={{backgroundColor: '#6b7f5e', padding: '40px 60px', color: 'white', marginLeft: '-40px', marginRight: '-40px', marginTop: '-40px', marginBottom: '32px'}}>
+        <h1 style={{fontSize: '36px', fontWeight: '300', marginBottom: '8px', textAlign: 'center'}}>
+          {name || "Seu Nome"}
+        </h1>
+        <div style={{height: '1px', backgroundColor: 'rgba(255,255,255,0.3)', margin: '20px 0'}}></div>
+        <div style={{textAlign: 'center', fontSize: '14px', lineHeight: '1.6'}}>
+          <div>{email || "seu.email@exemplo.com"}</div>
+          <div>{phone || "(11) 99999-9999"}</div>
+          {linkedin && <div>{linkedin}</div>}
+        </div>
+      </div>
 
-      <div className="text-sm text-neutral-600 flex flex-wrap gap-x-4 gap-y-1">
-        {email && <span>{email}</span>}
-        {phone && <span>{phone}</span>}
-        {linkedin && (
-          <a
-            href={linkedin}
-            target="_blank"
-            rel="noreferrer"
-            className="underline"
-          >
-            LinkedIn
-          </a>
+      {/* Resumo Profissional */}
+      <div className="space-y-4">
+        <div className="flex items-center gap-4 mb-6">
+          <div className="w-1 h-10 bg-gradient-to-b from-blue-500 to-purple-600 rounded-full"></div>
+          <h2 className="text-3xl font-light text-gray-800 tracking-wide">
+            Resumo Profissional
+          </h2>
+        </div>
+        
+        <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl shadow-md p-8">
+          <p className="text-gray-800 leading-loose text-justify font-normal text-lg tracking-wide">
+            {summary || "Descreva aqui seu perfil profissional, objetivos de carreira e principais qualificações que destacam seu potencial no mercado de trabalho."}
+          </p>
+        </div>
+
+        {onImproveSummary && (
+          <div className="mt-3">
+            <AIEnhanceButton
+              field="summary"
+              text={summary || ""}
+              onEnhanced={(t) => onImproveSummary(t)}
+              size="sm"
+            />
+          </div>
         )}
       </div>
-
-      <div className="space-y-2">
-        <p className="text-neutral-800 leading-relaxed">
-          {summary || "Resumo profissional aparecerá aqui."}
-        </p>
-
-        {onImproveSummary ? (
-          <AIEnhanceButton
-            field="summary"
-            text={summary || ""}
-            onEnhanced={(t) => onImproveSummary(t)}
-            size="sm"
-          />
-        ) : null}
-      </div>
-    </header>
+    </div>
   );
 };

@@ -11,28 +11,20 @@ type Props = {
 
 export const CVPreview: FC<Props> = ({ data, actions }) => {
   return (
-    <div className="h-full overflow-auto p-8 bg-white text-neutral-900">
-      <PersonalHeader
-        personal={data.personal}
-        onImproveSummary={
-          actions ? (t) => actions.updatePersonalInfo("summary", t) : undefined
-        }
-      />
+    <div className="bg-white rounded-lg shadow-xl border border-gray-100 min-h-[297mm] w-full overflow-hidden">
+      <div className="h-full overflow-auto text-neutral-900" style={{padding: '40px'}}>
+        <PersonalHeader
+          personal={data.personal}
+          onImproveSummary={undefined}
+        />
 
-      <div className="h-px w-full bg-neutral-200 my-6" />
+        <SkillsSection skills={data.skills} />
 
-      <SkillsSection skills={data.skills} />
-
-      <div className="h-px w-full bg-neutral-200 my-6" />
-
-      <ExperienceSection
-        experiences={data.experiences}
-        onImproveExperience={
-          actions
-            ? (id, t) => actions.updateExperience(id, { description: t })
-            : undefined
-        }
-      />
+        <ExperienceSection
+          experiences={data.experiences}
+          onImproveExperience={undefined}
+        />
+      </div>
     </div>
   );
 };
