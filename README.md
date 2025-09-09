@@ -18,7 +18,7 @@ CV Builder AI é um gerador de currículo inteligente, desenvolvido em React 19 
 - TypeScript
 - TailwindCSS v4
 - Vite
-- OpenAI API
+- Google Gemini API
 
 ---
 
@@ -39,15 +39,32 @@ CV Builder AI é um gerador de currículo inteligente, desenvolvido em React 19 
    npm install
    ```
 
-4. **Rode o projeto:**
+4. **Configure a API do Gemini:**
+   - Crie um arquivo `.env` na raiz do projeto (use `.env.example` como modelo)
+   - Obtenha sua chave da API do Google Gemini em: https://makersuite.google.com/app/apikey
+   - Adicione sua chave no arquivo `.env`:
+     ```
+     VITE_GEMINI_API_KEY=sua_chave_api_aqui
+     ```
+
+5. **Rode o projeto:**
    ```
    npm run dev
    ```
 
-5. **Acesse no navegador:**
+6. **Acesse no navegador:**
    ```
    http://localhost:5173/
    ```
+
+### Configuração da Chave da API
+
+O projeto oferece duas maneiras de configurar a chave da API do Gemini:
+
+1. **Arquivo .env (recomendado):** Configure a variável `VITE_GEMINI_API_KEY` no arquivo `.env`
+2. **Interface do usuário:** Use o botão de configurações (⚙️) na interface para inserir a chave diretamente no navegador
+
+A chave inserida pela interface tem prioridade sobre a do arquivo `.env`.
 
 ---
 
