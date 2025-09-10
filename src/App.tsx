@@ -7,28 +7,31 @@ import Skills from "./components/Form/Skills";
 import Experience from "./components/Form/Experience";
 import SettingsKeyButton from "./components/UI/SettingsKeyButton";
 import { CVPreview } from "./components/Preview/CVPreview";
+import { ThemeProvider } from "./contexts/ThemeContext";
 
 function App() {
   const { cvData, actions } = useCVData();
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="flex h-screen w-full">
-        <FormSection>
-          <PersonalInfoUltraSimple data={cvData.personal} actions={actions} />
-          <Skills data={cvData.skills} actions={actions} />
-          <Experience data={cvData.experiences} actions={actions} />
-        </FormSection>
+    <ThemeProvider>
+      <div className="min-h-screen bg-gray-50">
+        <div className="flex h-screen w-full">
+          <FormSection>
+            <PersonalInfoUltraSimple data={cvData.personal} actions={actions} />
+            <Skills data={cvData.skills} actions={actions} />
+            <Experience data={cvData.experiences} actions={actions} />
+          </FormSection>
 
-        {/* Preview usando o componente da pasta Preview */}
-        <PreviewSection>
-          <CVPreview data={cvData} actions={actions} />
-        </PreviewSection>
+          {/* Preview usando o componente da pasta Preview */}
+          <PreviewSection>
+            <CVPreview data={cvData} actions={actions} />
+          </PreviewSection>
+        </div>
+
+        {/* Botão flutuante para gerenciar a chave */}
+        <SettingsKeyButton />
       </div>
-
-      {/* Botão flutuante para gerenciar a chave */}
-      <SettingsKeyButton />
-    </div>
+    </ThemeProvider>
   );
 }
 

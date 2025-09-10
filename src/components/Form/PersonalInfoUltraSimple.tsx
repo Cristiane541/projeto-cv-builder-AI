@@ -151,7 +151,12 @@ const PersonalInfoUltraSimple: React.FC<PersonalInfoProps> = ({ data, actions })
             type="tel"
             value={data.phone}
             onChange={(e) => {
-              actions.updatePersonalInfo('phone', e.target.value);
+              // Permite apenas números, parênteses, hífen e espaços para formatação
+              const filteredValue = e.target.value.replace(/[^0-9()\-\s]/g, '');
+              // Limita a 15 caracteres (formato brasileiro: (XX) XXXXX-XXXX)
+              if (filteredValue.length <= 15) {
+                actions.updatePersonalInfo('phone', filteredValue);
+              }
               // Limpa erro se o usuário está digitando
               if (phoneTouched && phoneError) {
                 setPhoneError('');
@@ -159,6 +164,7 @@ const PersonalInfoUltraSimple: React.FC<PersonalInfoProps> = ({ data, actions })
             }}
             onBlur={handlePhoneBlur}
             placeholder="(11) 99999-9999"
+            maxLength={15}
             style={{ 
               width: '100%', 
               padding: '8px 12px', 
