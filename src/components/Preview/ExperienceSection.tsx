@@ -22,7 +22,7 @@ export const ExperienceSection: FC<Props> = ({
           style={{
             background: previewTheme 
               ? `linear-gradient(to bottom, ${previewTheme.colors.accent}, ${previewTheme.colors.primary})`
-              : 'linear-gradient(to bottom, #6b7f5e, #8b7f5e)' // Mesmo verde do header
+              : '#6b7f5e' // Cor sólida segura para html2canvas
           }}
         ></div>
         <h2 

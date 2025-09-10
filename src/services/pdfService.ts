@@ -173,6 +173,9 @@ export class PDFService {
     // NORMALIZA MARGENS NEGATIVAS QUE PODEM CAUSAR PROBLEMAS NO PDF
     this.fixNegativeMargins(clonedElement);
     
+    // SEMPRE remove gradientes problemáticos ANTES de aplicar tema
+    this.removeProblematicGradients(clonedElement);
+    
     // Aplica tema se fornecido
     if (theme) {
       console.log('📋 APLICANDO TEMA:', theme.name);
@@ -397,6 +400,42 @@ export class PDFService {
   }
 
   /**
+   * Remove gradientes problemáticos que causam erro no html2canvas
+   */
+  private static removeProblematicGradients(element: HTMLElement): void {
+    console.log('🔧 Removendo gradientes problemáticos...');
+    
+    // Remove TODOS os gradientes inline que causam problema no html2canvas
+    const elementsWithGradients = element.querySelectorAll('[style*="linear-gradient"], [style*="radial-gradient"], [style*="conic-gradient"]');
+    elementsWithGradients.forEach((el, index) => {
+      if (el instanceof HTMLElement) {
+        const currentStyle = el.style.background || el.style.backgroundImage;
+        console.log(`🔧 Elemento ${index} com gradiente encontrado:`, currentStyle);
+        
+        // Substitui por cor sólida segura
+        el.style.background = '#6b7f5e'; // Verde padrão
+        el.style.backgroundImage = 'none';
+        el.style.setProperty('background', '#6b7f5e', 'important');
+        el.style.setProperty('background-image', 'none', 'important');
+        
+        console.log(`✅ Gradiente ${index} removido e substituído por cor sólida`);
+      }
+    });
+    
+    // Remove gradientes em classes CSS problemáticas
+    const gradientClasses = element.querySelectorAll('[class*="gradient"], [class*="bg-gradient"]');
+    gradientClasses.forEach((el, index) => {
+      if (el instanceof HTMLElement) {
+        el.style.background = '#6b7f5e';
+        el.style.backgroundImage = 'none';
+        el.style.setProperty('background', '#6b7f5e', 'important');
+        el.style.setProperty('background-image', 'none', 'important');
+        console.log(`✅ Classe gradiente ${index} neutralizada`);
+      }
+    });
+  }
+
+  /**
    * Aplica tema ao elemento clonado
    */
   private static applyThemeToElement(element: HTMLElement, theme: PDFTheme): void {
@@ -512,22 +551,37 @@ export class PDFService {
       }
     });
 
-    // 2. Aplica cor dos gradientes e fundos especiais
+    // 2. Remove gradientes problemáticos e aplica cores sólidas
     const gradientElements = element.querySelectorAll('[class*="gradient"], [style*="gradient"], [class*="bg-gradient"]');
     gradientElements.forEach((el, index) => {
       if (el instanceof HTMLElement) {
         // Remove gradientes e aplica cor sólida
         el.style.background = theme.colors.sectionBg;
         el.style.backgroundImage = 'none';
+        el.style.setProperty('background', theme.colors.sectionBg, 'important');
+        el.style.setProperty('background-image', 'none', 'important');
         console.log(`🎨 Gradiente/Fundo ${index}: aplicado ${theme.colors.sectionBg}`);
       }
     });
 
-    // 3. Aplica cor de fundo geral
+    // 3. Remove TODOS os gradientes inline perigosos para html2canvas
+    const allElementsWithStyle = element.querySelectorAll('[style*="linear-gradient"], [style*="radial-gradient"], [style*="conic-gradient"]');
+    allElementsWithStyle.forEach((el, index) => {
+      if (el instanceof HTMLElement) {
+        // Substitui gradientes por cor sólida baseada no tema
+        el.style.background = theme.colors.primary;
+        el.style.backgroundImage = 'none';
+        el.style.setProperty('background', theme.colors.primary, 'important');
+        el.style.setProperty('background-image', 'none', 'important');
+        console.log(`🔧 Gradiente inline ${index}: removido e substituído por cor sólida`);
+      }
+    });
+
+    // 4. Aplica cor de fundo geral
     element.style.backgroundColor = theme.colors.background;
     element.style.color = theme.colors.text;
     
-    // 4. Aplica cores nos títulos das seções (H1, H2, H3, etc)
+    // 5. Aplica cores nos títulos das seções (H1, H2, H3, etc)
     const headings = element.querySelectorAll('h1, h2, h3, h4, h5, h6');
     headings.forEach((heading, index) => {
       if (heading instanceof HTMLElement) {

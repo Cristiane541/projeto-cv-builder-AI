@@ -224,7 +224,7 @@ export const ExportButton: FC<ExportButtonProps> = ({
           </>
         ) : (
           <>
-            📄 {useCustomColors ? 'PDF Personalizado' : 'Exportar PDF'}
+            📄 Exportar PDF
           </>
         )}
       </button>
