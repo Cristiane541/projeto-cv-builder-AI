@@ -3,6 +3,8 @@ import type { CVData, CVDataActions } from "../../types/cv.types";
 import { PersonalHeader } from "./PersonalHeader";
 import { SkillsSection } from "./SkillsSection";
 import { ExperienceSection } from "./ExperienceSection";
+import { ExportButton } from "./ExportButton";
+import { useTheme } from "../../contexts/ThemeContext";
 
 type Props = {
   data: CVData;
@@ -10,20 +12,49 @@ type Props = {
 };
 
 export const CVPreview: FC<Props> = ({ data, actions }) => {
+  const { previewTheme } = useTheme();
+
   return (
-    <div className="bg-white rounded-lg shadow-xl border border-gray-100 min-h-[297mm] w-full overflow-hidden">
-      <div className="h-full overflow-auto text-neutral-900" style={{padding: '40px'}}>
-        <PersonalHeader
-          personal={data.personal}
-          onImproveSummary={undefined}
-        />
+    <div className="relative">
+      {/* Conteúdo do CV */}
+      <div 
+        id="cv-preview-content"
+        className="bg-white rounded-lg shadow-xl border border-gray-100 min-h-[297mm] w-full"
+        style={{ overflow: 'visible' }}
+      >
+        <div className="h-full text-neutral-900" style={{padding: '0px 40px 40px 40px', overflow: 'visible'}}>
+          <PersonalHeader
+            personal={data.personal}
+            onImproveSummary={undefined}
+            previewTheme={previewTheme}
+          />
 
-        <SkillsSection skills={data.skills} />
+          {/* Botão de Export no topo esquerdo */}
+          <div 
+            className="absolute z-10 export-button"
+            style={{ 
+              top: '16px',    // Topo com margem pequena
+              left: '56px'    // Lado esquerdo, respeitando margem do conteúdo
+            }}
+          >
+            <ExportButton 
+              targetElementId="cv-preview-content"
+              cvData={{
+                name: data.personal.name || 'Usuario',
+                email: data.personal.email || '',
+                phone: data.personal.phone || ''
+              }}
+            />
+          </div>
 
-        <ExperienceSection
-          experiences={data.experiences}
-          onImproveExperience={undefined}
-        />
+          <SkillsSection skills={data.skills} previewTheme={previewTheme} />
+
+          <ExperienceSection
+            experiences={data.experiences}
+            onImproveExperience={undefined}
+            previewTheme={previewTheme}
+          />
+        </div>
       </div>
     </div>
   );

@@ -1,31 +1,60 @@
 import type { FC } from "react";
 import type { Experience } from "../../types/cv.types";
+import type { PDFTheme } from "../../types/pdf.types";
 import { AIEnhanceButton } from "../Form/AIEnhanceButton";
 
 type Props = {
   experiences: Experience[];
   onImproveExperience?: (id: string, newText: string) => void; // usa actions.updateExperience
+  previewTheme?: PDFTheme | null;
 };
 
 export const ExperienceSection: FC<Props> = ({
   experiences,
   onImproveExperience,
+  previewTheme,
 }) => {
   return (
     <section className="mt-12">
       <div className="flex items-center gap-4 mb-6">
-        <div className="w-1 h-10 bg-gradient-to-b from-purple-500 to-pink-600 rounded-full"></div>
-        <h2 className="text-3xl font-light text-gray-800 tracking-wide">
+        <div 
+          className="w-1 h-10 rounded-full"
+          style={{
+            background: previewTheme 
+              ? `linear-gradient(to bottom, ${previewTheme.colors.accent}, ${previewTheme.colors.primary})`
+              : 'linear-gradient(to bottom, #6b7f5e, #8b7f5e)' // Mesmo verde do header
+          }}
+        ></div>
+        <h2 
+          className="text-3xl font-light tracking-wide"
+          style={{
+            color: previewTheme ? previewTheme.colors.accent : '#6b7f5e'
+          }}
+        >
           Experiência Profissional
         </h2>
       </div>
       
       {!experiences?.length ? (
-        <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl shadow-md p-8">
+        <div 
+          className="rounded-xl shadow-md p-8"
+          style={{
+            background: previewTheme 
+              ? previewTheme.colors.sectionBg // Fundo neutro das seções
+              : '#f8fafc' // Fundo neutro
+          }}
+        >
           <p className="text-gray-600 text-center">Nenhuma experiência informada.</p>
         </div>
       ) : (
-        <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl shadow-md p-8">
+        <div 
+          className="rounded-xl shadow-md p-8"
+          style={{
+            background: previewTheme 
+              ? previewTheme.colors.sectionBg // Fundo neutro das seções
+              : '#f8fafc' // Fundo neutro
+          }}
+        >
           <div className="space-y-8">
             {experiences.map((e) => (
               <article key={e.id} className="bg-white rounded-lg shadow-sm p-6 hover:shadow-md transition-shadow">
@@ -37,7 +66,14 @@ export const ExperienceSection: FC<Props> = ({
                     <p className="text-gray-600 font-medium text-lg">{e.company || "Empresa"}</p>
                   </div>
                   <div className="lg:text-right">
-                    <span className="bg-gradient-to-r from-purple-100 to-pink-100 text-gray-700 px-4 py-2 rounded-full text-sm font-medium shadow-sm">
+                    <span 
+                      className="text-gray-700 px-4 py-2 rounded-full text-sm font-medium shadow-sm"
+                      style={{
+                        background: previewTheme 
+                          ? previewTheme.colors.sectionBg // Apenas cor de fundo derivada do header
+                          : '#f0f4f0' // Mesmo verde suave
+                      }}
+                    >
                       {e.period} {e.current ? "· Atual" : ""}
                     </span>
                   </div>
