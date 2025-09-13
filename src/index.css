@@ -20,3 +20,285 @@ body {
 #root {
   min-height: 100vh;
 }
+.cv-manager,
+.cv-import-export {
+  background: #fff;
+  border: 1px solid #e5e7eb; /* gray-200 */
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.06);
+  margin-bottom: 16px;
+}
+
+.cv-manager-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.cv-manager-header h3 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #111827;
+}
+.cv-manager-header > button {
+  background: #16a34a;
+  border: 1px solid #16a34a;
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+}
+.cv-manager-header > button:hover {
+  background: #15803d;
+}
+
+.cv-list {
+  list-style: none;
+  padding: 0;
+  margin: 12px 0 0;
+}
+.cv-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  border-radius: 10px;
+}
+.cv-list li:hover {
+  background: #f9fafb;
+}
+.cv-list li.selected {
+  background: #f0fdf4;
+  outline: 1px solid rgba(34, 197, 94, 0.4);
+}
+
+.cv-manager button,
+.cv-import-export button,
+.cv-import-export label[for] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #f9fafb;
+  border: 1px solid #d1d5db;
+  color: #374151;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+}
+.cv-manager button:hover,
+.cv-import-export button:hover,
+.cv-import-export label[for]:hover {
+  background: #f3f4f6;
+}
+
+.cv-create-inline button:first-of-type,
+.cv-edit-inline button:first-of-type {
+  background: #16a34a;
+  border-color: #16a34a;
+  color: #fff;
+}
+.cv-create-inline button:first-of-type:hover,
+.cv-edit-inline button:first-of-type:hover {
+  background: #15803d;
+}
+
+.cv-actions button:last-child {
+  border-color: #fecaca;
+  color: #b91c1c;
+  background: #fff;
+}
+.cv-actions button:last-child:hover {
+  background: #fef2f2;
+}
+
+.cv-create-inline input,
+.cv-edit-inline input {
+  padding: 6px 10px;
+  font-size: 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  width: 220px;
+  outline: none;
+}
+.cv-create-inline input:focus,
+.cv-edit-inline input:focus {
+  border-color: #16a34a;
+  box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.25);
+}
+
+.cv-selected-info {
+  margin-top: 8px;
+  color: #6b7280;
+  font-size: 12px;
+}
+.cv-selected-info small {
+  margin-right: 8px;
+}
+
+.cv-import-export h4 {
+  margin: 0 0 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #111827;
+}
+.cv-import-export .row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.cv-import-export input[type="file"] {
+  font-size: 14px;
+}
+
+.cv-import-export input[type="file"] {
+  display: none;
+}
+
+.cv-manager,
+.cv-import-export {
+  margin-bottom: 20px;
+}
+.cv-list li.selected {
+  background: #ecfdf5;
+  outline: 1px solid rgba(16, 185, 129, 0.35);
+}
+.cv-import-export .row {
+  gap: 10px;
+}
+.cv-manager-header > button {
+  border-radius: 10px;
+}
+.cv-manager button,
+.cv-import-export button,
+.cv-import-export label[for] {
+  border-radius: 10px;
+}
+
+.cv-manager,
+.cv-import-export {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.06);
+  padding: 18px 20px;
+  margin-bottom: 18px;
+}
+
+.cv-manager-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.cv-manager-header h3 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #111827;
+}
+.cv-manager-header > button {
+  background: #f9fafb;
+  border: 1px solid #d1d5db;
+  color: #374151;
+  padding: 6px 12px;
+  border-radius: 10px;
+  font-size: 14px;
+  cursor: pointer;
+}
+.cv-manager-header > button:hover {
+  background: #f3f4f6;
+}
+
+.cv-list {
+  list-style: none;
+  padding: 0;
+  margin: 12px 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.cv-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+}
+.cv-list li.selected {
+  border-color: #86efac;
+  box-shadow: inset 3px 0 0 0 #22c55e;
+  background: #fff;
+}
+
+.cv-actions {
+  display: flex;
+  gap: 8px;
+}
+.cv-edit-inline,
+.cv-create-inline {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.cv-edit-inline input,
+.cv-create-inline input {
+  padding: 6px 10px;
+  font-size: 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  width: 220px;
+}
+.cv-edit-inline input:focus,
+.cv-create-inline input:focus {
+  border-color: #16a34a;
+  box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.25);
+  outline: 0;
+}
+
+.cv-manager button,
+.cv-import-export button,
+.cv-import-export label[for] {
+  background: #f9fafb;
+  border: 1px solid #d1d5db;
+  color: #374151;
+  padding: 6px 12px;
+  border-radius: 10px;
+  font-size: 14px;
+  cursor: pointer;
+}
+.cv-manager button:hover,
+.cv-import-export button:hover,
+.cv-import-export label[for]:hover {
+  background: #f3f4f6;
+}
+.cv-actions button:last-child {
+  border-color: #fecaca;
+  color: #b91c1c;
+  background: #fff;
+}
+.cv-actions button:last-child:hover {
+  background: #fef2f2;
+}
+
+.cv-selected-info {
+  margin-top: 6px;
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.cv-import-export input[type="file"] {
+  display: none;
+}
+.cv-import-export .row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}

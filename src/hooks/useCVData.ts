@@ -1,15 +1,21 @@
-import { useState } from 'react';
-import type { CVData, PersonalInfo, Skill, Experience, CVDataActions } from '../types/cv.types';
+import { useState } from "react";
+import type {
+  CVData,
+  PersonalInfo,
+  Skill,
+  Experience,
+  CVDataActions,
+} from "../types/cv.types";
 
 // Hook para gerenciar o estado central do currículo
 export function useCVData() {
   const [cvData, setCVData] = useState<CVData>({
     personal: {
-      name: '',
-      email: '',
-      phone: '',
-      linkedin: '',
-      summary: '',
+      name: "",
+      email: "",
+      phone: "",
+      linkedin: "",
+      summary: "",
     },
     skills: [],
     experiences: [],
@@ -22,7 +28,7 @@ export function useCVData() {
       if (prev.personal[field] === value) {
         return prev;
       }
-      
+
       return {
         ...prev,
         personal: { ...prev.personal, [field]: value },
@@ -31,7 +37,7 @@ export function useCVData() {
   }
 
   // Adiciona uma habilidade
-  function addSkill(skill: Omit<Skill, 'id'>) {
+  function addSkill(skill: Omit<Skill, "id">) {
     const newSkill: Skill = {
       ...skill,
       id: crypto.randomUUID(),
@@ -51,7 +57,7 @@ export function useCVData() {
   }
 
   // Atualiza uma habilidade
-  function updateSkill(id: string, updates: Partial<Omit<Skill, 'id'>>) {
+  function updateSkill(id: string, updates: Partial<Omit<Skill, "id">>) {
     setCVData((prev) => ({
       ...prev,
       skills: prev.skills.map((skill) =>
@@ -61,7 +67,7 @@ export function useCVData() {
   }
 
   // Adiciona uma experiência
-  function addExperience(experience: Omit<Experience, 'id'>) {
+  function addExperience(experience: Omit<Experience, "id">) {
     const newExperience: Experience = {
       ...experience,
       id: crypto.randomUUID(),
@@ -81,7 +87,10 @@ export function useCVData() {
   }
 
   // Atualiza uma experiência
-  function updateExperience(id: string, updates: Partial<Omit<Experience, 'id'>>) {
+  function updateExperience(
+    id: string,
+    updates: Partial<Omit<Experience, "id">>
+  ) {
     setCVData((prev) => ({
       ...prev,
       experiences: prev.experiences.map((exp) =>
