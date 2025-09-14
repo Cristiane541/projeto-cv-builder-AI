@@ -1,5 +1,5 @@
-// Formulário de dados pessoais (com import de tipos e progresso tipado)
-import React, { useState } from "react";
+// src/components/Form/PersonalInfo.tsx
+import React, { useState, useCallback, memo } from "react";
 import type {
   PersonalInfo as PersonalInfoType,
   CVDataActions,
@@ -17,7 +17,6 @@ interface PersonalInfoProps {
   data: PersonalInfoType;
   actions: CVDataActions;
 }
-
 interface ValidationErrors {
   name?: string;
   email?: string;
@@ -26,84 +25,102 @@ interface ValidationErrors {
   summary?: string;
 }
 
+const InputField = memo<{
+  label: string;
+  field: keyof PersonalInfoType;
+  value: string;
+  error?: string;
+  onChange: (field: keyof PersonalInfoType, value: string) => void;
+  onBlur: (field: keyof PersonalInfoType) => void;
+  type?: string;
+  placeholder?: string;
+  required?: boolean;
+}>(
+  ({
+    label,
+    field,
+    value,
+    error,
+    onChange,
+    onBlur,
+    type = "text",
+    placeholder,
+    required = false,
+  }) => {
+    return (
+      <div className="mb-4">
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          {label} {required && <span className="text-red-500">*</span>}
+        </label>
+        <input
+          type={type}
+          value={value}
+          onChange={(e) => onChange(field, e.target.value)}
+          onBlur={() => onBlur(field)}
+          placeholder={placeholder}
+          autoComplete="off"
+          className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
+            error ? "border-red-500" : "border-gray-300"
+          }`}
+        />
+        {error && <p className="mt-1 text-sm text-red-600">{error}</p>}
+      </div>
+    );
+  }
+);
+
 const PersonalInfo: React.FC<PersonalInfoProps> = ({ data, actions }) => {
   const [errors, setErrors] = useState<ValidationErrors>({});
-
   const SUMMARY_MAX_LENGTH = 500;
 
-  function validateField(field: keyof PersonalInfoType, value: string) {
-    let validation;
-    switch (field) {
-      case "name":
-        validation = validateName(value);
-        break;
-      case "email":
-        validation = validateEmail(value);
-        break;
-      case "phone":
-        validation = validatePhone(value);
-        break;
-      case "linkedin":
-        validation = validateLinkedIn(value);
-        break;
-      case "summary":
-        validation = validateSummary(value, SUMMARY_MAX_LENGTH);
-        break;
-      default:
-        validation = { isValid: true };
-    }
-    setErrors((prev) => ({ ...prev, [field]: validation.error }));
-    return validation.isValid;
-  }
-
-  function handleFieldChange(field: keyof PersonalInfoType, value: string) {
-    actions.updatePersonalInfo(field, value);
-  }
-
-  function handleFieldBlur(field: keyof PersonalInfoType) {
-    if (field === "phone" && data[field]) {
-      const formatted = formatPhone(data[field]);
-      if (formatted !== data[field])
-        actions.updatePersonalInfo(field, formatted);
-    }
-    validateField(field, data[field]);
-  }
-
-  const InputField: React.FC<{
-    label: string;
-    field: keyof PersonalInfoType;
-    type?: string;
-    placeholder?: string;
-    required?: boolean;
-  }> = ({ label, field, type = "text", placeholder, required = false }) => (
-    <div className="mb-4">
-      <label className="block text-sm font-medium text-gray-700 mb-1">
-        {label} {required && <span className="text-red-500">*</span>}
-      </label>
-      <input
-        type={type}
-        value={data[field]}
-        onChange={(e) => handleFieldChange(field, e.target.value)}
-        onBlur={() => handleFieldBlur(field)}
-        placeholder={placeholder}
-        autoComplete="off"
-        className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
-          errors[field] ? "border-red-500" : "border-gray-300"
-        }`}
-      />
-      {errors[field] && (
-        <p className="mt-1 text-sm text-red-600">{errors[field]}</p>
-      )}
-    </div>
+  const validateField = useCallback(
+    (field: keyof PersonalInfoType, value: string) => {
+      let validation;
+      switch (field) {
+        case "name":
+          validation = validateName(value);
+          break;
+        case "email":
+          validation = validateEmail(value);
+          break;
+        case "phone":
+          validation = validatePhone(value);
+          break;
+        case "linkedin":
+          validation = validateLinkedIn(value);
+          break;
+        case "summary":
+          validation = validateSummary(value, SUMMARY_MAX_LENGTH);
+          break;
+        default:
+          validation = { isValid: true };
+      }
+      setErrors((prev) => ({ ...prev, [field]: validation.error }));
+      return validation.isValid;
+    },
+    []
   );
 
-  const filledCount = [
-    data.name,
-    data.email,
-    data.phone,
-    data.linkedin,
-    data.summary,
-  ].filter((v) => v.trim() !== "").length;
+  const handleFieldChange = useCallback(
+    (field: keyof PersonalInfoType, value: string) => {
+      actions.updatePersonalInfo(field, value);
+    },
+    [actions]
+  );
+
+  const handleFieldBlur = useCallback(
+    (field: keyof PersonalInfoType) => {
+      if (field === "phone" && data[field]) {
+        const formatted = formatPhone(data[field]);
+        if (formatted !== data[field])
+          actions.updatePersonalInfo(field, formatted);
+      }
+      validateField(field, data[field]);
+    },
+    [actions, data, validateField]
+  );
+
+  const filledCount = Object.values(data).filter((v) => v.trim() !== "").length;
   const progress = Math.round((filledCount / 5) * 100);
 
   return (
@@ -117,12 +134,20 @@ const PersonalInfo: React.FC<PersonalInfoProps> = ({ data, actions }) => {
           <InputField
             label="Nome Completo"
             field="name"
+            value={data.name}
+            error={errors.name}
+            onChange={handleFieldChange}
+            onBlur={handleFieldBlur}
             placeholder="Digite seu nome completo"
             required
           />
           <InputField
             label="Email"
             field="email"
+            value={data.email}
+            error={errors.email}
+            onChange={handleFieldChange}
+            onBlur={handleFieldBlur}
             type="email"
             placeholder="seu.email@exemplo.com"
             required
@@ -130,6 +155,10 @@ const PersonalInfo: React.FC<PersonalInfoProps> = ({ data, actions }) => {
           <InputField
             label="Telefone"
             field="phone"
+            value={data.phone}
+            error={errors.phone}
+            onChange={handleFieldChange}
+            onBlur={handleFieldBlur}
             type="tel"
             placeholder="(11) 99999-9999"
             required
@@ -137,6 +166,10 @@ const PersonalInfo: React.FC<PersonalInfoProps> = ({ data, actions }) => {
           <InputField
             label="LinkedIn"
             field="linkedin"
+            value={data.linkedin}
+            error={errors.linkedin}
+            onChange={handleFieldChange}
+            onBlur={handleFieldBlur}
             type="url"
             placeholder="https://linkedin.com/in/seuperfil"
           />
@@ -187,4 +220,4 @@ const PersonalInfo: React.FC<PersonalInfoProps> = ({ data, actions }) => {
   );
 };
 
-export default PersonalInfo;
+export default memo(PersonalInfo);

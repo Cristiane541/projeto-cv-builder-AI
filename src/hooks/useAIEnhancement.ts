@@ -1,7 +1,8 @@
 // src/hooks/useAIEnhancement.ts
-import { useState, useCallback } from "react";
+import { useState, useEffect } from "react";
 import type { AIEnhanceRequest, AIEnhanceResponse } from "../types/api.types";
 import { enhanceText } from "../services/aiService";
+import { useDebounce } from "./useDebounce";
 
 /** Fallback local simples se a API falhar */
 function localFallback(req: AIEnhanceRequest): AIEnhanceResponse {
@@ -25,19 +26,35 @@ function localFallback(req: AIEnhanceRequest): AIEnhanceResponse {
   return base;
 }
 
-export function useAIEnhancement() {
+export function useAIEnhancement(field: AIEnhanceRequest["field"]) {
+  const [prompt, setPrompt] = useState("");
+  const [result, setResult] = useState<AIEnhanceResponse | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const run = useCallback(async (req: AIEnhanceRequest) => {
-    setIsLoading(true);
-    try {
-      return await enhanceText(req);
-    } catch (e) {
-      console.error("IA (Gemini) falhou, usando fallback local:", e);
-      return localFallback(req);
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
 
-  return { run, isLoading };
+  const debouncedPrompt = useDebounce(prompt, 750);
+
+  useEffect(() => {
+    if (!debouncedPrompt) {
+      setResult(null);
+      return;
+    }
+
+    const runEnhancement = async () => {
+      setIsLoading(true);
+      const request: AIEnhanceRequest = { text: debouncedPrompt, field };
+      try {
+        const response = await enhanceText(request);
+        setResult(response);
+      } catch (e) {
+        console.error("IA (Gemini) falhou, usando fallback local:", e);
+        setResult(localFallback(request));
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    runEnhancement();
+  }, [debouncedPrompt, field]);
+
+  return { prompt, setPrompt, result, isLoading };
 }

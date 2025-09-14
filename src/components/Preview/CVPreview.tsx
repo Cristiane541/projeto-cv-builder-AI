@@ -1,5 +1,5 @@
 import type { FC } from "react";
-import type { CVData, CVDataActions } from "../../types/cv.types";
+import type { CVData } from "../../types/cv.types"; // Removido CVDataActions que não era mais necessário
 import { PersonalHeader } from "./PersonalHeader";
 import { SkillsSection } from "./SkillsSection";
 import { ExperienceSection } from "./ExperienceSection";
@@ -8,21 +8,25 @@ import { useTheme } from "../../contexts/ThemeContext";
 
 type Props = {
   data: CVData;
-  actions?: Pick<CVDataActions, "updatePersonalInfo" | "updateExperience">;
+  // A propriedade 'actions' foi removida daqui, pois não era usada.
 };
 
-export const CVPreview: FC<Props> = ({ data, actions }) => {
+// 'actions' foi removido da desestruturação das props aqui 👇
+export const CVPreview: FC<Props> = ({ data }) => {
   const { previewTheme } = useTheme();
 
   return (
     <div className="relative">
       {/* Conteúdo do CV */}
-      <div 
+      <div
         id="cv-preview-content"
         className="bg-white rounded-lg shadow-xl border border-gray-100 min-h-[297mm] w-full"
-        style={{ overflow: 'visible' }}
+        style={{ overflow: "visible" }}
       >
-        <div className="h-full text-neutral-900" style={{padding: '0px 40px 40px 40px', overflow: 'visible'}}>
+        <div
+          className="h-full text-neutral-900"
+          style={{ padding: "0px 40px 40px 40px", overflow: "visible" }}
+        >
           <PersonalHeader
             personal={data.personal}
             onImproveSummary={undefined}
@@ -30,19 +34,19 @@ export const CVPreview: FC<Props> = ({ data, actions }) => {
           />
 
           {/* Botão de Export no topo esquerdo */}
-          <div 
+          <div
             className="absolute z-10 export-button"
-            style={{ 
-              top: '16px',    // Topo com margem pequena
-              left: '56px'    // Lado esquerdo, respeitando margem do conteúdo
+            style={{
+              top: "16px",
+              left: "56px",
             }}
           >
-            <ExportButton 
+            <ExportButton
               targetElementId="cv-preview-content"
               cvData={{
-                name: data.personal.name || 'Usuario',
-                email: data.personal.email || '',
-                phone: data.personal.phone || ''
+                name: data.personal.name || "Usuario",
+                email: data.personal.email || "",
+                phone: data.personal.phone || "",
               }}
             />
           </div>
@@ -59,3 +63,5 @@ export const CVPreview: FC<Props> = ({ data, actions }) => {
     </div>
   );
 };
+
+export default CVPreview;
