@@ -1,5 +1,4 @@
-import { useCallback } from "react";
-import { useState } from "react";
+import React, { useCallback, useState, useContext, createContext, type ReactNode } from "react";
 import type {
   CVData,
   PersonalInfo,
@@ -8,8 +7,15 @@ import type {
   CVDataActions,
 } from "../types/cv.types";
 
-// Hook para gerenciar o estado central do currículo
-export function useCVData() {
+// Contexto global para CVData
+const CVDataContext = createContext<{
+  cvData: CVData;
+  setCVData: React.Dispatch<React.SetStateAction<CVData>>;
+  setSelectedThemeKey: (themeKey: string | null) => void;
+  actions: CVDataActions;
+} | undefined>(undefined);
+
+export const CVDataProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [cvData, setCVData] = useState<CVData>({
     personal: {
       name: "",
@@ -20,6 +26,7 @@ export function useCVData() {
     },
     skills: [],
     experiences: [],
+    selectedThemeKey: null,
   });
 
   // Atualiza dados pessoais
@@ -111,6 +118,14 @@ export function useCVData() {
     []
   );
 
+  // Atualiza o tema selecionado
+  const setSelectedThemeKey = useCallback((themeKey: string | null) => {
+    setCVData((prev) => ({
+      ...prev,
+      selectedThemeKey: themeKey,
+    }));
+  }, []);
+
   // Retorna os dados e ações conforme a interface CVDataActions
   const actions: CVDataActions = {
     updatePersonalInfo,
@@ -122,9 +137,15 @@ export function useCVData() {
     updateExperience,
   };
 
-  return {
-    cvData,
-    actions,
-    setCVData,
-  };
+  return (
+    <CVDataContext.Provider value={{ cvData, actions, setCVData, setSelectedThemeKey }}>
+      {children}
+    </CVDataContext.Provider>
+  );
+};
+
+export function useCVData() {
+  const context = useContext(CVDataContext);
+  if (!context) throw new Error("useCVData deve ser usado dentro de CVDataProvider");
+  return context;
 }

@@ -1,5 +1,8 @@
 // src/components/Form/PersonalInfo.tsx
-import React, { useState, useCallback, memo } from "react";
+import * as React from "react";
+import { useState, useCallback, useEffect } from "react";
+import { memo } from "react";
+import { useUndoRedo } from "../../hooks/useUndoRedo";
 import type {
   PersonalInfo as PersonalInfoType,
   CVDataActions,
@@ -12,6 +15,7 @@ import {
   validateSummary,
   formatPhone,
 } from "../../utils/validation";
+// import { data } from "framer-motion/client"; // Removed, not needed and causes type errors
 
 interface PersonalInfoProps {
   data: PersonalInfoType;
@@ -25,7 +29,7 @@ interface ValidationErrors {
   summary?: string;
 }
 
-const InputField = memo<{
+interface InputFieldProps {
   label: string;
   field: keyof PersonalInfoType;
   value: string;
@@ -35,43 +39,52 @@ const InputField = memo<{
   type?: string;
   placeholder?: string;
   required?: boolean;
-}>(
-  ({
-    label,
-    field,
-    value,
-    error,
-    onChange,
-    onBlur,
-    type = "text",
-    placeholder,
-    required = false,
-  }) => {
-    return (
-      <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          {label} {required && <span className="text-red-500">*</span>}
-        </label>
-        <input
-          type={type}
-          value={value}
-          onChange={(e) => onChange(field, e.target.value)}
-          onBlur={() => onBlur(field)}
-          placeholder={placeholder}
-          autoComplete="off"
-          className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
-            error ? "border-red-500" : "border-gray-300"
-          }`}
-        />
-        {error && <p className="mt-1 text-sm text-red-600">{error}</p>}
-      </div>
-    );
-  }
-);
+}
+
+const InputField = memo(({
+  label,
+  field,
+  value,
+  error,
+  onChange,
+  onBlur,
+  type = "text",
+  placeholder,
+  required = false,
+}: InputFieldProps) => {
+  return (
+    <div className="mb-4">
+      <label className="block text-sm font-medium text-gray-700 mb-1">
+        {label} {required && <span className="text-red-500">*</span>}
+      </label>
+      <input
+        type={type}
+        value={value}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChange(field, e.target.value)}
+        onBlur={() => onBlur(field)}
+        placeholder={placeholder}
+        autoComplete="off"
+        className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
+          error ? "border-red-500" : "border-gray-300"
+        }`}
+      />
+      {error && <p className="mt-1 text-sm text-red-600">{error}</p>}
+    </div>
+  );
+});
 
 const PersonalInfo: React.FC<PersonalInfoProps> = ({ data, actions }) => {
   const [errors, setErrors] = useState<ValidationErrors>({});
   const SUMMARY_MAX_LENGTH = 500;
+
+  // Integrar undo/redo
+  const { state, set, undo, redo, canUndo, canRedo } = useUndoRedo<PersonalInfoType>(data);
+
+  // Atualiza estado local e global ao alterar campo
+  useEffect(() => {
+    set(data);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data]);
 
   const validateField = useCallback(
     (field: keyof PersonalInfoType, value: string) => {
@@ -95,21 +108,22 @@ const PersonalInfo: React.FC<PersonalInfoProps> = ({ data, actions }) => {
         default:
           validation = { isValid: true };
       }
-      setErrors((prev) => ({ ...prev, [field]: validation.error }));
+      setErrors((prev: ValidationErrors) => ({ ...prev, [field]: validation.error }));
       return validation.isValid;
     },
     []
   );
 
   const handleFieldChange = useCallback(
-    (field: keyof PersonalInfoType, value: string) => {
+    (field: keyof PersonalInfoType, value: string): void => {
       actions.updatePersonalInfo(field, value);
+      set({ ...state, [field]: value });
     },
-    [actions]
+    [actions, state, set]
   );
 
   const handleFieldBlur = useCallback(
-    (field: keyof PersonalInfoType) => {
+    (field: keyof PersonalInfoType): void => {
       if (field === "phone" && data[field]) {
         const formatted = formatPhone(data[field]);
         if (formatted !== data[field])
@@ -120,7 +134,7 @@ const PersonalInfo: React.FC<PersonalInfoProps> = ({ data, actions }) => {
     [actions, data, validateField]
   );
 
-  const filledCount = Object.values(data).filter((v) => v.trim() !== "").length;
+  const filledCount = Object.values(data).filter((v: unknown) => typeof v === "string" && v.trim() !== "").length;
   const progress = Math.round((filledCount / 5) * 100);
 
   return (
@@ -134,7 +148,7 @@ const PersonalInfo: React.FC<PersonalInfoProps> = ({ data, actions }) => {
           <InputField
             label="Nome Completo"
             field="name"
-            value={data.name}
+            value={state.name}
             error={errors.name}
             onChange={handleFieldChange}
             onBlur={handleFieldBlur}
@@ -144,7 +158,7 @@ const PersonalInfo: React.FC<PersonalInfoProps> = ({ data, actions }) => {
           <InputField
             label="Email"
             field="email"
-            value={data.email}
+            value={state.email}
             error={errors.email}
             onChange={handleFieldChange}
             onBlur={handleFieldBlur}
@@ -155,7 +169,7 @@ const PersonalInfo: React.FC<PersonalInfoProps> = ({ data, actions }) => {
           <InputField
             label="Telefone"
             field="phone"
-            value={data.phone}
+            value={state.phone}
             error={errors.phone}
             onChange={handleFieldChange}
             onBlur={handleFieldBlur}
@@ -166,7 +180,7 @@ const PersonalInfo: React.FC<PersonalInfoProps> = ({ data, actions }) => {
           <InputField
             label="LinkedIn"
             field="linkedin"
-            value={data.linkedin}
+            value={state.linkedin}
             error={errors.linkedin}
             onChange={handleFieldChange}
             onBlur={handleFieldBlur}
@@ -179,8 +193,8 @@ const PersonalInfo: React.FC<PersonalInfoProps> = ({ data, actions }) => {
               Resumo Profissional <span className="text-red-500">*</span>
             </label>
             <textarea
-              value={data.summary}
-              onChange={(e) => handleFieldChange("summary", e.target.value)}
+              value={state.summary}
+              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleFieldChange("summary", e.target.value)}
               onBlur={() => handleFieldBlur("summary")}
               placeholder="Descreva brevemente sua experiência profissional..."
               rows={4}
@@ -197,12 +211,17 @@ const PersonalInfo: React.FC<PersonalInfoProps> = ({ data, actions }) => {
                 )}
               </div>
               <p className="text-sm text-gray-500">
-                {data.summary.length}/{SUMMARY_MAX_LENGTH}
+                {state.summary.length}/{SUMMARY_MAX_LENGTH}
               </p>
             </div>
           </div>
         </div>
 
+        {/* Botões de undo/redo para feedback visual */}
+        <div className="flex gap-2 mt-4">
+          <button onClick={undo} disabled={!canUndo} className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50">Desfazer</button>
+          <button onClick={redo} disabled={!canRedo} className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50">Refazer</button>
+        </div>
         <div className="mt-6 pt-4 border-t border-gray-200">
           <div className="flex items-center justify-between text-sm text-gray-600">
             <span>Progresso do preenchimento:</span>
@@ -221,3 +240,5 @@ const PersonalInfo: React.FC<PersonalInfoProps> = ({ data, actions }) => {
 };
 
 export default memo(PersonalInfo);
+// (Removido: função setErrors não implementada e desnecessária)
+

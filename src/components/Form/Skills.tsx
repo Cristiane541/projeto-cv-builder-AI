@@ -1,3 +1,4 @@
+import { Plus, Lightbulb, ChartBar } from "phosphor-react";
 import React from "react";
 import type { Skill, CVDataActions, SkillLevel } from "../../types/cv.types";
 
@@ -25,18 +26,26 @@ const Skills: React.FC<SkillsProps> = ({ data, actions }) => {
 
   const label: React.CSSProperties = {
     display: "block",
-    fontSize: "14px",
-    fontWeight: 500,
-    marginBottom: "4px",
-    color: "#374151",
+    fontSize: "15px",
+    fontWeight: 700,
+    marginBottom: "8px",
+    color: "#0073b1",
+    fontFamily: 'Montserrat, Arial, sans-serif',
+    letterSpacing: '0.5px',
+    textTransform: 'uppercase'
   };
 
   const inputBase: React.CSSProperties = {
     width: "100%",
-    padding: "8px 12px",
-    border: "1px solid #d1d5db",
-    borderRadius: "6px",
-    fontSize: "14px",
+    padding: "14px 18px",
+    border: "2px solid #e5f3ff",
+    borderRadius: "12px",
+    fontSize: "16px",
+    fontFamily: 'Montserrat, Arial, sans-serif',
+    background: 'linear-gradient(135deg, #ffffff 0%, #f8fcff 100%)',
+    transition: 'all 0.3s ease',
+    boxShadow: '0 2px 8px rgba(0,115,177,0.08)',
+    outline: 'none'
   };
 
   const rowGap: React.CSSProperties = {
@@ -60,22 +69,52 @@ const Skills: React.FC<SkillsProps> = ({ data, actions }) => {
 
       <div style={rowGap}>
         <div>
-          <label style={label}>Habilidade</label>
+          <label style={{
+            ...label,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px'
+          }}><Lightbulb size={20} color="#0073b1" weight="bold" /> Habilidade</label>
           <input
             type="text"
             value={newSkill}
             onChange={(e) => setNewSkill(e.target.value)}
             placeholder="Ex.: React, TypeScript, Python"
             style={inputBase}
+            onFocus={(e) => {
+              e.target.style.border = '2px solid #0073b1';
+              e.target.style.boxShadow = '0 4px 16px rgba(0,115,177,0.15)';
+              e.target.style.transform = 'translateY(-1px)';
+            }}
+            onBlur={(e) => {
+              e.target.style.border = '2px solid #e5f3ff';
+              e.target.style.boxShadow = '0 2px 8px rgba(0,115,177,0.08)';
+              e.target.style.transform = 'translateY(0)';
+            }}
           />
         </div>
 
         <div>
-          <label style={label}>Nível</label>
+          <label style={{
+            ...label,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px'
+          }}><ChartBar size={20} color="#0073b1" weight="bold" /> Nível</label>
           <select
             value={newLevel}
             onChange={(e) => setNewLevel(e.target.value as SkillLevel)}
             style={inputBase}
+            onFocus={(e) => {
+              e.target.style.border = '2px solid #0073b1';
+              e.target.style.boxShadow = '0 4px 16px rgba(0,115,177,0.15)';
+              e.target.style.transform = 'translateY(-1px)';
+            }}
+            onBlur={(e) => {
+              e.target.style.border = '2px solid #e5f3ff';
+              e.target.style.boxShadow = '0 2px 8px rgba(0,115,177,0.08)';
+              e.target.style.transform = 'translateY(0)';
+            }}
           >
             <option value="Básico">Básico</option>
             <option value="Intermediário">Intermediário</option>
@@ -87,15 +126,15 @@ const Skills: React.FC<SkillsProps> = ({ data, actions }) => {
           <button
             onClick={addSkill}
             style={{
-              padding: "8px 16px",
-              backgroundColor: "#2563eb",
-              color: "white",
-              borderRadius: "6px",
-              border: "none",
-              cursor: "pointer",
+              display: 'flex', alignItems: 'center', gap: 6,
+              background: '#eaf3fb', color: '#0073b1', border: 'none', borderRadius: 8,
+              padding: '8px 16px', fontWeight: 600, fontSize: 15, cursor: 'pointer',
+              boxShadow: '0 2px 8px rgba(0,115,177,0.08)', transition: 'background 0.2s',
             }}
+            onMouseEnter={e => e.currentTarget.style.background = '#cde6fa'}
+            onMouseLeave={e => e.currentTarget.style.background = '#eaf3fb'}
           >
-            Adicionar
+            <Plus size={20} color="#0073b1" weight="bold" /> Adicionar
           </button>
         </div>
       </div>

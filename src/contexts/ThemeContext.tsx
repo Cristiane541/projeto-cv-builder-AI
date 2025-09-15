@@ -1,6 +1,5 @@
 // src/contexts/ThemeContext.tsx
-import type { FC, ReactNode } from 'react';
-import { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, type FC, type ReactNode } from 'react';
 import type { PDFTheme } from '../types/pdf.types';
 import { PDF_THEMES } from '../types/pdf.types';
 
@@ -15,33 +14,25 @@ interface ThemeContextType {
   clearPreviewTheme: () => void;
 }
 
-const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
+export const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 interface ThemeProviderProps {
   children: ReactNode;
+  selectedThemeKey?: string | null;
 }
 
-export const ThemeProvider: FC<ThemeProviderProps> = ({ children }) => {
-  const [previewTheme, setPreviewTheme] = useState<PDFTheme | null>(null);
+export const ThemeProvider: FC<ThemeProviderProps> = ({ children, selectedThemeKey }) => {
+  // previewTheme pode ser alterado instantaneamente pelo usuário
+  // previewTheme sempre reflete o tema salvo no CV
+  const previewTheme = (typeof selectedThemeKey === 'string' && selectedThemeKey in PDF_THEMES)
+    ? PDF_THEMES[selectedThemeKey]
+    : null;
 
-  const applyThemeByKey = (themeKey: string) => {
-    if (themeKey === 'default') {
-      setPreviewTheme(null); // Tema padrão = sem tema aplicado
-    } else {
-      const theme = PDF_THEMES[themeKey];
-      if (theme) {
-        setPreviewTheme(theme);
-      }
-    }
-  };
-
-  const applyCustomTheme = (customTheme: PDFTheme) => {
-    setPreviewTheme(customTheme);
-  };
-
-  const clearPreviewTheme = () => {
-    setPreviewTheme(null);
-  };
+  // As funções abaixo não mudam o preview local
+  const setPreviewTheme = () => {};
+  const applyThemeByKey = () => {};
+  const applyCustomTheme = () => {};
+  const clearPreviewTheme = () => {};
 
   return (
     <ThemeContext.Provider value={{

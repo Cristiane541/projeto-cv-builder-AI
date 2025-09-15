@@ -22,7 +22,11 @@ export interface Experience {
   id: string;
   company: string;
   role: string;
-  period: string;
+  period: string; // Mantido para compatibilidade, será gerado automaticamente
+  startMonth: number;
+  startYear: number;
+  endMonth?: number; // Opcional para trabalho atual
+  endYear?: number; // Opcional para trabalho atual
   description: string;
   current: boolean;
 }
@@ -32,6 +36,7 @@ export interface CVData {
   personal: PersonalInfo;
   skills: Skill[];
   experiences: Experience[];
+  selectedThemeKey?: string | null;
 }
 
 // Callbacks para atualização dos dados

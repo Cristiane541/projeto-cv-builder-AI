@@ -20,8 +20,11 @@ export const CVPreview: FC<Props> = ({ data }) => {
       {/* Conteúdo do CV */}
       <div
         id="cv-preview-content"
-        className="bg-white rounded-lg shadow-xl border border-gray-100 min-h-[297mm] w-full"
-        style={{ overflow: "visible" }}
+        className="rounded-lg shadow-xl border border-gray-100 min-h-[297mm] w-full"
+        style={{ 
+          overflow: "visible",
+          background: previewTheme?.colors?.background || '#ffffff'
+        }}
       >
         <div
           className="h-full text-neutral-900"

@@ -19,7 +19,13 @@ export const PersonalHeader: FC<Props> = ({ personal, onImproveSummary, previewT
     <div>
       {/* Header com fundo dinâmico baseado no tema */}
       <div style={{backgroundColor: headerColor, padding: '40px 60px', color: 'white', marginLeft: '-40px', marginRight: '-40px', marginTop: '0px', marginBottom: '32px'}}>
-        <h1 style={{fontSize: '36px', fontWeight: '300', marginBottom: '8px', textAlign: 'center'}}>
+        <h1 style={{
+          fontSize: '2.2rem',
+          fontWeight: 700,
+          marginBottom: 16,
+          textAlign: 'center',
+          fontFamily: 'Montserrat, Arial, sans-serif',
+        }}>
           {name || "Seu Nome"}
         </h1>
         <div style={{height: '1px', backgroundColor: 'rgba(255,255,255,0.7)', margin: '20px 0', width: '100%', display: 'block', boxShadow: '0 0 1px rgba(255,255,255,0.3)'}}></div>

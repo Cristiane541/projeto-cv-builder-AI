@@ -25,7 +25,11 @@ function AppDebug() {
           boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
         }}
       >
-        <h1
+        <h1 style={{
+          fontSize: '2.2rem',
+          marginBottom: 16,
+          fontFamily: 'Montserrat, Arial, sans-serif',
+        }}
           style={{
             fontSize: "1.5rem",
             fontWeight: "bold",

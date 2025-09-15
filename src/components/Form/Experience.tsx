@@ -1,4 +1,5 @@
 import React from "react";
+import { Trash, Buildings, Briefcase, Calendar } from "phosphor-react";
 import type {
   Experience as ExperienceType,
   CVDataActions,
@@ -11,23 +12,69 @@ interface ExperienceProps {
 }
 
 const Experience: React.FC<ExperienceProps> = ({ data, actions }) => {
+  const currentYear = new Date().getFullYear();
   const [newExp, setNewExp] = React.useState({
     company: "",
     role: "",
     period: "",
+    startMonth: 1,
+    startYear: currentYear - 1,
+    endMonth: 12,
+    endYear: currentYear,
     description: "",
     current: false,
   });
 
-  const handleChange = (field: keyof typeof newExp, value: string | boolean) =>
+  const monthNames = [
+    "Jan", "Fev", "Mar", "Abr", "Mai", "Jun",
+    "Jul", "Ago", "Set", "Out", "Nov", "Dez"
+  ];
+
+  const formatPeriod = (startMonth: number, startYear: number, endMonth?: number, endYear?: number, current?: boolean) => {
+    const startPeriod = `${monthNames[startMonth - 1]} ${startYear}`;
+    if (current) {
+      return `${startPeriod} - Atual`;
+    }
+    if (endMonth && endYear) {
+      const endPeriod = `${monthNames[endMonth - 1]} ${endYear}`;
+      return `${startPeriod} - ${endPeriod}`;
+    }
+    return startPeriod;
+  };
+
+  const handleChange = (field: keyof typeof newExp, value: string | boolean | number) =>
     setNewExp((prev) => ({ ...prev, [field]: value }));
 
   const addExperience = () => {
     if (!newExp.company.trim() || !newExp.role.trim()) return;
+    
+    // Validação de data: fim deve ser posterior ao início
+    if (!newExp.current) {
+      const startDate = new Date(newExp.startYear, newExp.startMonth - 1);
+      const endDate = new Date(newExp.endYear, newExp.endMonth - 1);
+      
+      if (endDate <= startDate) {
+        alert("A data de fim deve ser posterior à data de início!");
+        return;
+      }
+    }
+    
+    const period = formatPeriod(
+      newExp.startMonth, 
+      newExp.startYear, 
+      newExp.current ? undefined : newExp.endMonth, 
+      newExp.current ? undefined : newExp.endYear, 
+      newExp.current
+    );
+
     actions.addExperience({
       company: newExp.company.trim(),
       role: newExp.role.trim(),
-      period: newExp.period,
+      period,
+      startMonth: newExp.startMonth,
+      startYear: newExp.startYear,
+      endMonth: newExp.current ? undefined : newExp.endMonth,
+      endYear: newExp.current ? undefined : newExp.endYear,
       description: newExp.description,
       current: newExp.current,
     });
@@ -35,6 +82,10 @@ const Experience: React.FC<ExperienceProps> = ({ data, actions }) => {
       company: "",
       role: "",
       period: "",
+      startMonth: 1,
+      startYear: currentYear - 1,
+      endMonth: 12,
+      endYear: currentYear,
       description: "",
       current: false,
     });
@@ -49,18 +100,26 @@ const Experience: React.FC<ExperienceProps> = ({ data, actions }) => {
 
   const label: React.CSSProperties = {
     display: "block",
-    fontSize: "14px",
-    fontWeight: 500,
-    marginBottom: "4px",
-    color: "#374151",
+    fontSize: "15px",
+    fontWeight: 700,
+    marginBottom: "8px",
+    color: "#0073b1",
+    fontFamily: 'Montserrat, Arial, sans-serif',
+    letterSpacing: '0.5px',
+    textTransform: 'uppercase'
   };
 
   const inputBase: React.CSSProperties = {
     width: "100%",
-    padding: "8px 12px",
-    border: "1px solid #d1d5db",
-    borderRadius: "6px",
-    fontSize: "14px",
+    padding: "14px 18px",
+    border: "2px solid #e5f3ff",
+    borderRadius: "12px",
+    fontSize: "16px",
+    fontFamily: 'Montserrat, Arial, sans-serif',
+    background: 'linear-gradient(135deg, #ffffff 0%, #f8fcff 100%)',
+    transition: 'all 0.3s ease',
+    boxShadow: '0 2px 8px rgba(0,115,177,0.08)',
+    outline: 'none'
   };
 
   const rowGap: React.CSSProperties = {
@@ -84,36 +143,172 @@ const Experience: React.FC<ExperienceProps> = ({ data, actions }) => {
 
       <div style={rowGap}>
         <div>
-          <label style={label}>Nome da empresa</label>
+          <label style={{
+            ...label,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px'
+          }}><Buildings size={20} color="#0073b1" weight="bold" /> Nome da empresa</label>
           <input
             type="text"
             value={newExp.company}
             onChange={(e) => handleChange("company", e.target.value)}
             placeholder="Ex.: Acme S.A."
             style={inputBase}
+            onFocus={(e) => {
+              e.target.style.border = '2px solid #0073b1';
+              e.target.style.boxShadow = '0 4px 16px rgba(0,115,177,0.15)';
+              e.target.style.transform = 'translateY(-1px)';
+            }}
+            onBlur={(e) => {
+              e.target.style.border = '2px solid #e5f3ff';
+              e.target.style.boxShadow = '0 2px 8px rgba(0,115,177,0.08)';
+              e.target.style.transform = 'translateY(0)';
+            }}
           />
         </div>
 
         <div>
-          <label style={label}>Cargo/Posição</label>
+          <label style={{
+            ...label,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px'
+          }}><Briefcase size={20} color="#0073b1" weight="bold" /> Cargo/Posição</label>
           <input
             type="text"
             value={newExp.role}
             onChange={(e) => handleChange("role", e.target.value)}
             placeholder="Ex.: Desenvolvedor Front-end"
             style={inputBase}
+            onFocus={(e) => {
+              e.target.style.border = '2px solid #0073b1';
+              e.target.style.boxShadow = '0 4px 16px rgba(0,115,177,0.15)';
+              e.target.style.transform = 'translateY(-1px)';
+            }}
+            onBlur={(e) => {
+              e.target.style.border = '2px solid #e5f3ff';
+              e.target.style.boxShadow = '0 2px 8px rgba(0,115,177,0.08)';
+              e.target.style.transform = 'translateY(0)';
+            }}
           />
         </div>
 
         <div>
-          <label style={label}>Período</label>
-          <input
-            type="text"
-            value={newExp.period}
-            onChange={(e) => handleChange("period", e.target.value)}
-            placeholder="Ex.: Jan 2020 - Dez 2022"
-            style={inputBase}
-          />
+          <label style={{
+            ...label,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px'
+          }}><Calendar size={20} color="#0073b1" weight="bold" /> Período</label>
+          
+          <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', alignItems: 'center' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+              <label style={{ fontSize: '13px', color: '#0073b1', fontWeight: '600' }}>Início:</label>
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <select
+                  value={newExp.startMonth}
+                  onChange={(e) => handleChange("startMonth", parseInt(e.target.value))}
+                  style={{
+                    ...inputBase,
+                    width: '100px',
+                    padding: '10px 12px'
+                  }}
+                  onFocus={(e) => {
+                    e.target.style.border = '2px solid #0073b1';
+                    e.target.style.boxShadow = '0 4px 16px rgba(0,115,177,0.15)';
+                    e.target.style.transform = 'translateY(-1px)';
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.border = '2px solid #e5f3ff';
+                    e.target.style.boxShadow = '0 2px 8px rgba(0,115,177,0.08)';
+                    e.target.style.transform = 'translateY(0)';
+                  }}
+                >
+                  {monthNames.map((month, index) => (
+                    <option key={index + 1} value={index + 1}>{month}</option>
+                  ))}
+                </select>
+                <select
+                  value={newExp.startYear}
+                  onChange={(e) => handleChange("startYear", parseInt(e.target.value))}
+                  style={{
+                    ...inputBase,
+                    width: '90px',
+                    padding: '10px 12px'
+                  }}
+                  onFocus={(e) => {
+                    e.target.style.border = '2px solid #0073b1';
+                    e.target.style.boxShadow = '0 4px 16px rgba(0,115,177,0.15)';
+                    e.target.style.transform = 'translateY(-1px)';
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.border = '2px solid #e5f3ff';
+                    e.target.style.boxShadow = '0 2px 8px rgba(0,115,177,0.08)';
+                    e.target.style.transform = 'translateY(0)';
+                  }}
+                >
+                  {Array.from({ length: 30 }, (_, i) => currentYear - i).map(year => (
+                    <option key={year} value={year}>{year}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            {!newExp.current && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                <label style={{ fontSize: '13px', color: '#0073b1', fontWeight: '600' }}>Fim:</label>
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <select
+                    value={newExp.endMonth}
+                    onChange={(e) => handleChange("endMonth", parseInt(e.target.value))}
+                    style={{
+                      ...inputBase,
+                      width: '100px',
+                      padding: '10px 12px'
+                    }}
+                    onFocus={(e) => {
+                      e.target.style.border = '2px solid #0073b1';
+                      e.target.style.boxShadow = '0 4px 16px rgba(0,115,177,0.15)';
+                      e.target.style.transform = 'translateY(-1px)';
+                    }}
+                    onBlur={(e) => {
+                      e.target.style.border = '2px solid #e5f3ff';
+                      e.target.style.boxShadow = '0 2px 8px rgba(0,115,177,0.08)';
+                      e.target.style.transform = 'translateY(0)';
+                    }}
+                  >
+                    {monthNames.map((month, index) => (
+                      <option key={index + 1} value={index + 1}>{month}</option>
+                    ))}
+                  </select>
+                  <select
+                    value={newExp.endYear}
+                    onChange={(e) => handleChange("endYear", parseInt(e.target.value))}
+                    style={{
+                      ...inputBase,
+                      width: '90px',
+                      padding: '10px 12px'
+                    }}
+                    onFocus={(e) => {
+                      e.target.style.border = '2px solid #0073b1';
+                      e.target.style.boxShadow = '0 4px 16px rgba(0,115,177,0.15)';
+                      e.target.style.transform = 'translateY(-1px)';
+                    }}
+                    onBlur={(e) => {
+                      e.target.style.border = '2px solid #e5f3ff';
+                      e.target.style.boxShadow = '0 2px 8px rgba(0,115,177,0.08)';
+                      e.target.style.transform = 'translateY(0)';
+                    }}
+                  >
+                    {Array.from({ length: 30 }, (_, i) => currentYear - i).map(year => (
+                      <option key={year} value={year}>{year}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
 
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
@@ -141,36 +336,49 @@ const Experience: React.FC<ExperienceProps> = ({ data, actions }) => {
             style={{ ...inputBase, resize: "none", fontFamily: "inherit" }}
           />
           
-          {/* Botão Melhorar com IA para nova experiência */}
-          {newExp.description && (
-            <div style={{ marginTop: '8px', display: 'flex', justifyContent: 'flex-end' }}>
-              <AIEnhanceButton
-                field="experience"
-                text={newExp.description}
-                context={`${newExp.company} | ${newExp.role} | ${newExp.period}`}
-                onEnhanced={(enhancedText) => {
-                  handleChange("description", enhancedText);
-                }}
-                size="sm"
-              />
-            </div>
-          )}
-        </div>
-
-        <div>
-          <button
-            onClick={addExperience}
-            style={{
-              padding: "8px 16px",
-              backgroundColor: "#2563eb",
-              color: "white",
-              borderRadius: "6px",
-              border: "none",
-              cursor: "pointer",
-            }}
-          >
-            Adicionar Experiência
-          </button>
+          {/* Botões na mesma linha: Adicionar Experiência e Melhorar com IA */}
+          <div style={{ marginTop: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '12px' }}>
+            <button
+              onClick={addExperience}
+              style={{
+                padding: "10px 18px",
+                backgroundColor: "#2563eb",
+                color: "white",
+                borderRadius: "8px",
+                border: "none",
+                cursor: "pointer",
+                fontFamily: 'Montserrat, Arial, sans-serif',
+                fontSize: "14px",
+                fontWeight: "600",
+                transition: "all 0.2s ease",
+                boxShadow: "0 2px 8px rgba(37, 99, 235, 0.2)",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = "#1d4ed8";
+                e.currentTarget.style.transform = "translateY(-1px)";
+                e.currentTarget.style.boxShadow = "0 4px 12px rgba(37, 99, 235, 0.3)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = "#2563eb";
+                e.currentTarget.style.transform = "translateY(0)";
+                e.currentTarget.style.boxShadow = "0 2px 8px rgba(37, 99, 235, 0.2)";
+              }}
+            >
+              Adicionar Experiência
+            </button>
+            
+            <AIEnhanceButton
+              field="experience"
+              text={newExp.description || `Descreva atividades como ${newExp.role || 'profissional'} na ${newExp.company || 'empresa'}`}
+              context={`${newExp.company || 'Empresa'} | ${newExp.role || 'Cargo'}`}
+              onEnhanced={(enhancedText) => {
+                handleChange("description", enhancedText);
+              }}
+              size="sm"
+              label="Melhorar com IA"
+              disabled={!newExp.description?.trim()}
+            />
+          </div>
         </div>
       </div>
 
@@ -202,20 +410,20 @@ const Experience: React.FC<ExperienceProps> = ({ data, actions }) => {
                   {exp.period} {exp.current && "(Atual)"}
                 </p>
               </div>
-              <button
-                onClick={() => actions.removeExperience(exp.id)}
-                title="Remover experiência"
-                style={{
-                  background: "none",
-                  border: "none",
-                  color: "#dc2626",
-                  cursor: "pointer",
-                  marginLeft: 16,
-                  fontSize: 16,
-                }}
-              >
-                ✕
-              </button>
+                  <button
+                    onClick={() => actions.removeExperience(exp.id)}
+                    title="Remover experiência"
+                    style={{
+                      display: 'flex', alignItems: 'center', gap: 6,
+                      background: '#ffeaea', color: '#dc2626', border: 'none', borderRadius: 8,
+                      padding: '6px 14px', fontWeight: 600, fontSize: 15, cursor: 'pointer',
+                      boxShadow: '0 2px 8px rgba(220,38,38,0.08)', transition: 'background 0.2s',
+                    }}
+                    onMouseEnter={e => e.currentTarget.style.background = '#ffd6d6'}
+                    onMouseLeave={e => e.currentTarget.style.background = '#ffeaea'}
+                  >
+                      <Trash size={16} color="#dc2626" weight="bold" /> Remover
+                  </button>
             </div>
 
             {exp.description && (
@@ -230,21 +438,23 @@ const Experience: React.FC<ExperienceProps> = ({ data, actions }) => {
                 >
                   {exp.description}
                 </p>
-                
-                {/* Botão Melhorar com IA para experiência existente */}
-                <div style={{ marginTop: '8px', display: 'flex', justifyContent: 'flex-end' }}>
-                  <AIEnhanceButton
-                    field="experience"
-                    text={exp.description}
-                    context={`${exp.company} | ${exp.role} | ${exp.period}`}
-                    onEnhanced={(enhancedText) => {
-                      actions.updateExperience(exp.id, { description: enhancedText });
-                    }}
-                    size="sm"
-                  />
-                </div>
               </div>
             )}
+            
+            {/* Botão Melhorar com IA para experiência existente - sempre visível mas desabilitado sem texto */}
+            <div style={{ marginTop: '8px', display: 'flex', justifyContent: 'flex-end' }}>
+              <AIEnhanceButton
+                field="experience"
+                text={exp.description || `Descreva atividades como ${exp.role} na ${exp.company}`}
+                context={`${exp.company} | ${exp.role}`}
+                onEnhanced={(enhancedText) => {
+                  actions.updateExperience(exp.id, { description: enhancedText });
+                }}
+                size="sm"
+                label="Melhorar com IA"
+                disabled={!exp.description?.trim()}
+              />
+            </div>
           </div>
         ))}
 

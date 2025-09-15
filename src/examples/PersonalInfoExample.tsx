@@ -9,7 +9,11 @@ const PersonalInfoExample: React.FC = () => {
   return (
     <div className="max-w-2xl mx-auto p-6 bg-gray-50 min-h-screen">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-800 mb-2">
+        <h1 className="text-2xl font-bold text-gray-800 mb-2" style={{
+          fontSize: '2.2rem',
+          marginBottom: 16,
+          fontFamily: 'Montserrat, Arial, sans-serif',
+        }}>
           Exemplo - Formulário de Dados Pessoais
         </h1>
         <p className="text-gray-600">
